@@ -1,0 +1,27 @@
+name: Generate German Cards
+
+on:
+  workflow_dispatch:
+    inputs:
+      topic:
+        description: 'Какую тему обновить? (weather, restaurant, city, shopping, health, hotel, job, hobby, guests, emergency)'
+        required: true
+        default: 'restaurant'
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-python: '3.10'
+
+      - name: Run Generator Script
+        run: |
+          echo "Робот успешно запущен!"
+          echo "Тема для генерации: ${{ github.event.inputs.topic }}"
+          # На следующем этапе здесь будет запуск нашего ИИ-скрипта!
