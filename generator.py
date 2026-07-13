@@ -87,8 +87,8 @@ def generate_words():
         with open("index.html", "r", encoding="utf-8") as f:
             html_content = f.read()
 
-        # Ищем блок этой темы в базе данных внутри index.html и заменяем его
-        pattern = rf'({topic}:\s*\[)(.*?)(\],\s*\n?\s*//?\s*Временные|\]\s*,\s*\n?\s*\w+:\s*\[)'
+        # Ищем блок этой темы в базе данных внутри index.html и заменяем его (улучшенный поиск)
+        pattern = rf'({topic}:\s*\[)(.*?)(\]\s*,?\s*\n?\s*//?\s*[Вв]ременные|\]\s*,?\s*\n?\s*\w+:\s*\[)'
         
         # Превращаем новые слова в красивую строку кода
         formatted_words = ",\n".join([f'                {{ de: "{w["de"]}", ru: "{w["ru"]}", gender: "{w["gender"]}" }}' for w in new_words])
