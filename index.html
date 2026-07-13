@@ -1,176 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><body>
-    <div class="phone-container">
-        
-        <!-- ГЛАВНЫЙ ЭКРАН: ВЫБОР УРОВНЕЙ -->
-        <div id="menu-screen">
-            <div class="header">
-                <h1>⭐ Level Select ⭐</h1>
-            </div>
-            
-            <div class="levels-list">
-                <!-- Уровень 1 -->
-                <div class="level-card color-blue" onclick="startLevel('weather')">
-                    <div class="level-card-title">1. Погода и планы 🌤️</div>
-                    <div class="level-card-subtitle">Обсудить прогноз погоды и договориться о встрече</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-weather" style="width: 100%;"></div>
-                        </div>
-                        <div class="progress-text">25 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 2 -->
-                <div class="level-card color-orange" onclick="startLevel('restaurant')">
-                    <div class="level-card-title">2. Кафе и ресторан ☕</div>
-                    <div class="level-card-subtitle">Заказ, счет, официант, платить, вкусно...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-restaurant" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 3 -->
-                <div class="level-card color-purple" onclick="startLevel('city')">
-                    <div class="level-card-title">3. Ориентация в городе 🗺️</div>
-                    <div class="level-card-subtitle">Направо, вокзал, автобус, спросить дорогу...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-city" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 4 -->
-                <div class="level-card color-green" onclick="startLevel('shopping')">
-                    <div class="level-card-title">4. Покупки и супермаркет 🛒</div>
-                    <div class="level-card-subtitle">Пакет, сдача, карта, стоить, объясниться на кассе...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-shopping" style="width: 100%;"></div>
-                        </div>
-                        <div class="progress-text">25 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 5 -->
-                <div class="level-card color-yellow" onclick="startLevel('health')">
-                    <div class="level-card-title">5. Самочувствие и врач 🏥</div>
-                    <div class="level-card-subtitle">Боль, рецепт, аптека, объяснить, что болит...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-health" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 6 -->
-                <div class="level-card color-blue" onclick="startLevel('hotel')">
-                    <div class="level-card-title">6. Поиск жилья / Отель 🔑</div>
-                    <div class="level-card-subtitle">Ключ, комната, залог, арендовать, въезжать...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-hotel" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 7 -->
-                <div class="level-card color-orange" onclick="startLevel('job')">
-                    <div class="level-card-title">7. Работа и резюме 💼</div>
-                    <div class="level-card-subtitle">Опыт, коллега, фирма, базовое собеседование...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-job" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 8 -->
-                <div class="level-card color-purple" onclick="startLevel('hobby')">
-                    <div class="level-card-title">8. Хобби и свободное время ⚽</div>
-                    <div class="level-card-subtitle">Книга, спорт, друзья, разговор о жизни...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-hobby" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 9 -->
-                <div class="level-card color-green" onclick="startLevel('guests')">
-                    <div class="level-card-title">9. В гостях / Праздники 🍷</div>
-                    <div class="level-card-subtitle">Подарок, вино, приглашение, сказать тост...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-guests" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-
-                <!-- Уровень 10 -->
-                <div class="level-card color-yellow" onclick="startLevel('emergency')">
-                    <div class="level-card-title">10. Проблемы и ЧС 🚨</div>
-                    <div class="level-card-subtitle">Потерять, украли, полиция, попросить о помощи...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-emergency" style="width: 0%;"></div>
-                        </div>
-                        <div class="progress-text">0 / 25 слов</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ЭКРАН С АКТИВНЫМИ КАРТОЧКАМИ (изначально скрыт) -->
-        <div id="card-screen" class="card-screen">
-            <button class="back-btn" onclick="backToMenu()">⬅️ Назад к меню</button>
-            
-            <div class="card" id="main-card" onclick="flipCard()">
-                <div class="counter" id="card-counter">1 / 25</div>
-                <div class="german" id="german-text">Загрузка...</div>
-                <div class="russian" id="russian-text">Перевод...</div>
-            </div>
-
-            <div class="controls">
-                <button class="btn btn-prev" onclick="prevCard(event)">Назад</button>
-                <button class="btn btn-next" onclick="nextCard(event)">Вперед</button>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- ТУТ БУДЕТ НАШ НОВЫЙ МОЗГ (JS) В ШАГЕ 3 -->
-    <script>
-        // Мы заменим этот пустой скрипт в следующем шаге!
-        function startLevel(level) {
-            document.getElementById('menu-screen').style.display = 'none';
-            document.getElementById('card-screen').style.display = 'flex';
-        }
-        function backToMenu() {
-            document.getElementById('menu-screen').style.display = 'flex';
-            document.getElementById('card-screen').style.display = 'none';
-        }
-        function flipCard() {}
-        function prevCard(e) { e.stopPropagation(); }
-        function nextCard(e) { e.stopPropagation(); }
-    </script>
-</body>
-</html>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Немецкий Блокнот (По родам)</title>
-   <style>
+    <style>
         * {
             box-sizing: border-box;
             margin: 0;
@@ -476,7 +310,7 @@
                 <!-- Уровень 4 -->
                 <div class="level-card color-green" onclick="startLevel('shopping')">
                     <div class="level-card-title">4. Покупки и супермаркет 🛒</div>
-                    <div class="level-card-subtitle">Пакет, сдача, карта, стоить, объясниться на кассе...</div>
+                    <div class="level-card-subtitle">Пакет, сдача, карта, стоить, объяснить на кассе...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
                             <div class="progress-bar-fill" id="progress-shopping" style="width: 100%;"></div>
@@ -577,7 +411,6 @@
 
     </div>
 
-    <!-- ТУТ БУДЕТ НАШ НОВЫЙ МОЗГ (JS) В ШАГЕ 3 -->
     <script>
         // Мы заменим этот пустой скрипт в следующем шаге!
         function startLevel(level) {
