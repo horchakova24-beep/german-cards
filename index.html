@@ -262,309 +262,169 @@
     </style>
 </head>
 <body>
-
-    <div class="container">
+    <div class="phone-container">
         
-        <div class="legend" style="flex-wrap: wrap; gap: 5px;">
-            <div class="legend-item"><div class="dot" style="background: #FFEBEE; border: 1px solid #ff7b93;"></div> Женский род (die)</div>
-            <div class="legend-item"><div class="dot" style="background: #E8F5E9; border: 1px solid #4CAF50;"></div> Средний род (das)</div>
-            <div class="legend-item"><div class="dot" style="background: #E3F2FD; border: 1px solid #2196F3;"></div> Мужской род (der)</div>
-            <div class="legend-item"><div class="dot" style="background: #FFFDE7; border: 1px solid #FFEB3B;"></div> Безличные / Общие</div>
-        </div>
-
-        <div class="topics-row" id="topicsRow">
-            <button class="topic-tile" id="topicWeather" data-target="clickModeSection">
-                <span class="topic-ru">Погода</span>
-                <span class="topic-de">Wetter</span>
-            </button>
-            <button class="topic-tile" id="topicShopping" data-target="clickModeSection">
-            <span class="topic-ru">Покупки в магазине</span>
-            <span class="topic-de">Einkaufen</span>
-        </button>
-        </div>
-
-        <!-- КАРТОЧКИ: ПОГОДА -->
-        <div class="card-box" id="clickModeSection" style="display: none;">
-            <div class="card" id="mainCard">
-                <div class="counter" id="cardCounter">1 / 150</div>
-                <div class="german" id="cardGerman"></div>
-                <div class="russian" id="cardRussian"></div>
+        <!-- ГЛАВНЫЙ ЭКРАН: ВЫБОР УРОВНЕЙ -->
+        <div id="menu-screen">
+            <div class="header">
+                <h1>⭐ Level Select ⭐</h1>
             </div>
             
+            <div class="levels-list">
+                <!-- Уровень 1 -->
+                <div class="level-card color-blue" onclick="startLevel('weather')">
+                    <div class="level-card-title">1. Погода и планы 🌤️</div>
+                    <div class="level-card-subtitle">Обсудить прогноз погоды и договориться о встрече</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-weather" style="width: 100%;"></div>
+                        </div>
+                        <div class="progress-text">25 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 2 -->
+                <div class="level-card color-orange" onclick="startLevel('restaurant')">
+                    <div class="level-card-title">2. Кафе и ресторан ☕</div>
+                    <div class="level-card-subtitle">Заказ, счет, официант, платить, вкусно...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-restaurant" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 3 -->
+                <div class="level-card color-purple" onclick="startLevel('city')">
+                    <div class="level-card-title">3. Ориентация в городе 🗺️</div>
+                    <div class="level-card-subtitle">Направо, вокзал, автобус, спросить дорогу...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-city" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 4 -->
+                <div class="level-card color-green" onclick="startLevel('shopping')">
+                    <div class="level-card-title">4. Покупки и супермаркет 🛒</div>
+                    <div class="level-card-subtitle">Пакет, сдача, карта, стоить, объясниться на кассе...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-shopping" style="width: 100%;"></div>
+                        </div>
+                        <div class="progress-text">25 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 5 -->
+                <div class="level-card color-yellow" onclick="startLevel('health')">
+                    <div class="level-card-title">5. Самочувствие и врач 🏥</div>
+                    <div class="level-card-subtitle">Боль, рецепт, аптека, объяснить, что болит...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-health" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 6 -->
+                <div class="level-card color-blue" onclick="startLevel('hotel')">
+                    <div class="level-card-title">6. Поиск жилья / Отель 🔑</div>
+                    <div class="level-card-subtitle">Ключ, комната, залог, арендовать, въезжать...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-hotel" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 7 -->
+                <div class="level-card color-orange" onclick="startLevel('job')">
+                    <div class="level-card-title">7. Работа и резюме 💼</div>
+                    <div class="level-card-subtitle">Опыт, коллега, фирма, базовое собеседование...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-job" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 8 -->
+                <div class="level-card color-purple" onclick="startLevel('hobby')">
+                    <div class="level-card-title">8. Хобби и свободное время ⚽</div>
+                    <div class="level-card-subtitle">Книга, спорт, друзья, разговор о жизни...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-hobby" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 9 -->
+                <div class="level-card color-green" onclick="startLevel('guests')">
+                    <div class="level-card-title">9. В гостях / Праздники 🍷</div>
+                    <div class="level-card-subtitle">Подарок, вино, приглашение, сказать тост...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-guests" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+
+                <!-- Уровень 10 -->
+                <div class="level-card color-yellow" onclick="startLevel('emergency')">
+                    <div class="level-card-title">10. Проблемы и ЧС 🚨</div>
+                    <div class="level-card-subtitle">Потерять, украли, полиция, попросить о помощи...</div>
+                    <div class="progress-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="progress-emergency" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-text">0 / 25 слов</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН С АКТИВНЫМИ КАРТОЧКАМИ (изначально скрыт) -->
+        <div id="card-screen" class="card-screen">
+            <button class="back-btn" onclick="backToMenu()">⬅️ Назад к меню</button>
+            
+            <div class="card" id="main-card" onclick="flipCard()">
+                <div class="counter" id="card-counter">1 / 25</div>
+                <div class="german" id="german-text">Загрузка...</div>
+                <div class="russian" id="russian-text">Перевод...</div>
+            </div>
+
             <div class="controls">
-                <button class="btn" id="prevBtn">⬅️ Назад</button>
-                <button class="btn" id="nextBtn">Вперед ➡️</button>
+                <button class="btn btn-prev" onclick="prevCard(event)">Назад</button>
+                <button class="btn btn-next" onclick="nextCard(event)">Вперед</button>
             </div>
         </div>
 
     </div>
 
-
+    <!-- ТУТ БУДЕТ НАШ НОВЫЙ МОЗГ (JS) В ШАГЕ 3 -->
     <script>
-        const phrases = [
-            { de: "Die Sonne scheint.", ru: "Солнце светит.", cat: "fem" },
-            { de: "Ich genieße die Sonne.", ru: "Я наслаждаюсь солнцем.", cat: "fem" },
-            { de: "Im Frühling scheint die Sonne.", ru: "Весной светит солнце.", cat: "fem" },
-            { de: "Im Sommer ist es sonnig.", ru: "Летом солнечно.", cat: "fem" },
-            { de: "Die Temperatur ist hoch.", ru: "Температура высокая.", cat: "fem" },
-            { de: "Die Temperatur ist niedrig.", ru: "Температура низкая.", cat: "fem" },
-            { de: "Die Temperatur wechselt jeden Tag.", ru: "Температура меняется каждый день.", cat: "fem" },
-            { de: "Ich genieße die Jahreszeit.", ru: "Я наслаждаюсь этим временем года.", cat: "fem" },
-            { de: "Wegen der Kälte bleibe ich zu Hause.", ru: "Из-за холода я остаюсь дома.", cat: "fem" },
-            { de: "Bei Sonne gehe ich nicht mit Regenschirm.", ru: "В солнечную погоду я не хожу с зонтом.", cat: "fem" },
-            { de: "Das Konzert findet bei Sonne statt.", ru: "Концерт состоится в солнечную погоду.", cat: "fem" },
-            { de: "Morgen scheint die Sonne sonnig.", ru: "Завтра солнце будет светить солнечно.", cat: "fem" },
-            { de: "Im Sommer scheint die Sonne heiß.", ru: "Летом солнце светит жарко.", cat: "fem" },
-            { de: "Im Frühling scheint die Sonne kühl.", ru: "Весной солнце светит прохладно.", cat: "fem" },
-            { de: "Die Wolke wechselt schnell.", ru: "Облако быстро меняется.", cat: "fem" },
-            { de: "Es gibt eine große Wolke.", ru: "Есть большое облако.", cat: "fem" },
-            { de: "Die Sonne ist heute heiß.", ru: "Солнце сегодня жаркое.", cat: "fem" },
-            { de: "Ich liebe die Sonne.", ru: "Я люблю солнце.", cat: "fem" },
-            { de: "Die Sonne bringt Wärme.", ru: "Солнце приносит тепло.", cat: "fem" },
-            { de: "Die Temperatur steigt.", ru: "Температура растет.", cat: "fem" },
-            { de: "Die Temperatur sinkt.", ru: "Температура падает.", cat: "fem" },
-            { de: "Es gibt eine dicke Wolke.", ru: "Есть густое облако.", cat: "fem" },
-            { de: "Die Sonne geht auf.", ru: "Солнце встает.", cat: "fem" },
-            { de: "Die Sonne geht unter.", ru: "Солнце садится.", cat: "fem" },
-            { de: "Die Sonne wärmt uns.", ru: "Солнце греет нас.", cat: "fem" },
-            { de: "Die Temperatur ist angenehm.", ru: "Температура приятная.", cat: "fem" },
-            { de: "Die Jahreszeit ist schön.", ru: "Время года прекрасное.", cat: "fem" },
-            { de: "Welche Jahreszeit ist es?", ru: "Какое сейчас время года?", cat: "fem" },
-            { de: "Die Wolke bringt Regen.", ru: "Облако приносит дождь.", cat: "fem" },
-            { de: "Ich sehe die Sonne.", ru: "Я вижу солнце.", cat: "fem" },
-            { de: "Die Sonne blendet mich.", ru: "Солнце слепит меня.", cat: "fem" },
-            { de: "Die Temperatur ist perfekt.", ru: "Температура идеальная.", cat: "fem" },
-            { de: "Jede Jahreszeit hat Charme.", ru: "У каждого времени года есть шарм.", cat: "fem" },
-            { de: "Die Wolke zieht vorbei.", ru: "Облако проходит мимо.", cat: "fem" },
-            { de: "Die Sonne versteckt sich.", ru: "Солнце прячется.", cat: "fem" },
-            { de: "Ohne die Sonne ist es kalt.", ru: "Без солнца холодно.", cat: "fem" },
-            { de: "Die Temperatur im Sommer ist hoch.", ru: "Температура летом высокая.", cat: "fem" },
-            { de: "Die Temperatur im Winter ist niedrig.", ru: "Температура зимой низкая.", cat: "fem" },
-            { de: "Das Wetter wechselt oft.", ru: "Погода часто меняется.", cat: "neu" },
-            { de: "Ich genieße das warme Wetter.", ru: "Я наслаждаюсь теплой погодой.", cat: "neu" },
-            { de: "Das Picknick findet bei gutem Wetter statt.", ru: "Пикник состоится при хорошей погоде.", cat: "neu" },
-            { de: "Es gibt Gewitter.", ru: "Гроза.", cat: "neu" },
-            { de: "Das Gewitter findet im Sommer statt.", ru: "Гроза бывает летом.", cat: "neu" },
-            { de: "Das Gewitter findet heute statt.", ru: "Гроза случится сегодня.", cat: "neu" },
-            { de: "Ich genieße das Wetter heute.", ru: "Я наслаждаюсь погодой сегодня.", cat: "neu" },
-            { de: "Das Wetter ist heute nass.", ru: "Погода сегодня сырая.", cat: "neu" },
-            { de: "Das Wetter ist morgen windig.", ru: "Погода завтра будет ветреной.", cat: "neu" },
-            { de: "Das Wetter ist im Herbst nass.", ru: "Погода осенью сырая.", cat: "neu" },
-            { de: "Das Gewitter zieht auf.", ru: "Гроза надвигается.", cat: "neu" },
-            { de: "Das Wetter ist herrlich.", ru: "Погода чудесная.", cat: "neu" },
-            { de: "Das Gewitter macht mir Angst.", ru: "Гроза меня пугает.", cat: "neu" },
-            { de: "Das Picknick macht Spaß.", ru: "Пикник приносит удовольствие.", cat: "neu" },
-            { de: "Das Wetter bleibt schön.", ru: "Погода остается хорошей.", cat: "neu" },
-            { de: "Das Wetter wird schlecht.", ru: "Погода портится.", cat: "neu" },
-            { de: "Das Gewitter ist vorbei.", ru: "Гроза прошла.", cat: "neu" },
-            { de: "Das Wetter im Frühling ist wechselhaft.", ru: "Погода весной изменчивая.", cat: "neu" },
-            { de: "Das Wetter im Sommer ist stabil.", ru: "Погода летом стабильная.", cat: "neu" },
-            { de: "Wie ist das Wetter?", ru: "Какая погода?", cat: "neu" },
-            { de: "Das Wetter gefällt mir.", ru: "Погода мне нравится.", cat: "neu" },
-            { de: "Das Gewitter bringt Abkühlung.", ru: "Гроза приносит прохладу.", cat: "neu" },
-            { de: "Das Picknick fällt aus.", ru: "Пикник отменяется.", cat: "neu" },
-            { de: "Das Wetter im Winter ist eisig.", ru: "Погода зимой ледяная.", cat: "neu" },
-            { de: "Das Wetter bricht um.", ru: "Погода резко меняется.", cat: "neu" },
-            { de: "Das Gewitter leuchtet.", ru: "Гроза сверкает.", cat: "neu" },
-            { de: "Das Wetter erlaubt Spaziergänge.", ru: "Погода позволяет гулять.", cat: "neu" },
-            { de: "Das Wetter ist wunderbar.", ru: "Погода прекрасная.", cat: "neu" },
-            { de: "Das Gewitter ist laut.", ru: "Гроза громкая.", cat: "neu" },
-            { de: "Das Wetter ändert sich.", ru: "Погода меняется.", cat: "neu" },
-            { de: "Das Picknick wird verschoben.", ru: "Пикник переносится.", cat: "neu" },
-            { de: "Das Wetter ist ungemütlich.", ru: "Погода неуютная.", cat: "neu" },
-            { de: "Das Gewitter reinigt die Luft.", ru: "Гроза очищает воздух.", cat: "neu" },
-            { de: "Ich mag das Wetter im Mai.", ru: "Мне нравится погода в мае.", cat: "neu" },
-            { de: "Das Wetter überrascht uns.", ru: "Погода удивляет нас.", cat: "neu" },
-            { de: "Das Gewitter verzieht sich.", ru: "Гроза уходит.", cat: "neu" },
-            { de: "Das Wetter wird milder.", ru: "Погода становится мягче.", cat: "neu" },
-            { de: "Der Wind weht.", ru: "Ветер дует.", cat: "masc" },
-            { de: "Der Wind bläst.", ru: "Ветер дует.", cat: "masc" },
-            { de: "Es gibt Regen.", ru: "Идет дождь (Дождь есть).", cat: "masc" },
-            { de: "Es gibt Schnee.", ru: "Идет снег (Снег есть).", cat: "masc" },
-            { de: "Der Wind weht heute stark und kalt.", ru: "Ветер дует сегодня сильно и холодно.", cat: "masc" },
-            { de: "Der Wind bläst im Herbst windig.", ru: "Ветер дует осенью ветрено.", cat: "masc" },
-            { de: "Morgen weht der Wind kalt.", ru: "Завтра ветер будет дуть холодно.", cat: "masc" },
-            { de: "Der Regen hört auf.", ru: "Дождь прекращается.", cat: "masc" },
-            { de: "Der Schnee schmilzt.", ru: "Снег тает.", cat: "masc" },
-            { de: "Der Wind treibt die Wolken.", ru: "Ветер гонит облака.", cat: "masc" },
-            { de: "Ich genieße den Sommer.", ru: "Я наслаждаюсь летом.", cat: "masc" },
-            { de: "Ich genieße den Frühling.", ru: "Я наслаждаюсь весной.", cat: "masc" },
-            { de: "Ich genieße den Herbst.", ru: "Я наслаждаюсь осенью.", cat: "masc" },
-            { de: "Ich genieße den Winter.", ru: "Я наслаждаюсь зимой.", cat: "masc" },
-            { de: "Bei Regen nehme ich den Regenschirm.", ru: "В дождь я беру зонтик.", cat: "masc" },
-            { de: "Heute nehme ich den Regenschirm.", ru: "Сегодня я беру зонтик.", cat: "masc" },
-            { de: "Morgen nehme ich den Regenschirm.", ru: "Завтра я возьму зонтик.", cat: "masc" },
-            { de: "Im Herbst nehme ich den Regenschirm.", ru: "Осенью я беру зонтик.", cat: "masc" },
-            { de: "Der Regen trommelt.", ru: "Дождь барабанит.", cat: "masc" },
-            { de: "Der Schnee fällt leise.", ru: "Снег падает тихо.", cat: "masc" },
-            { de: "Der Wind heult.", ru: "Ветер воет.", cat: "masc" },
-            { de: "Der Regenschirm ist kaputt.", ru: "Зонтик сломан.", cat: "masc" },
-            { de: "Der Frühling bringt Blumen.", ru: "Весна приносит цветы.", cat: "masc" },
-            { de: "Der Sommer bringt Hitze.", ru: "Лето приносит жару.", cat: "masc" },
-            { de: "Der Herbst bringt Blätter.", ru: "Осень приносит листья.", cat: "masc" },
-            { de: "Der Winter bringt Eis.", ru: "Зима приносит лед.", cat: "masc" },
-            { de: "Der Regen erfrischt.", ru: "Дождь освежает.", cat: "masc" },
-            { de: "Der Schnee glänzt.", ru: "Снег блестит.", cat: "masc" },
-            { de: "Der Wind legt sich.", ru: "Ветер утихает.", cat: "masc" },
-            { de: "Wo ist der Regenschirm?", ru: "Где зонтик?", cat: "masc" },
-            { de: "Der Grad zeigt die Kälte.", ru: "Градус показывает холод.", cat: "masc" },
-            { de: "Der Regen wird stärker.", ru: "Дождь усиливается.", cat: "masc" },
-            { de: "Der Schnee taut.", ru: "Снег тает.", cat: "masc" },
-            { de: "Der Wind kommt von Norden.", ru: "Ветер дует с севера.", cat: "masc" },
-            { de: "Der Regenschirm schützt mich.", ru: "Зонт защищает меня.", cat: "masc" },
-            { de: "Der Herbst ist golden.", ru: "Осень золотая.", cat: "masc" },
-            { de: "Der Winter ist lang.", ru: "Зима долгая.", cat: "masc" },
-            { de: "Der Frühling ist da.", ru: "Весна пришла.", cat: "masc" },
-            { de: "Es regnet.", ru: "Идет дождь.", cat: "other" },
-            { de: "Es schneit.", ru: "Идет снег.", cat: "other" },
-            { de: "Es ist kalt.", ru: "Холодно.", cat: "other" },
-            { de: "Es ist warm.", ru: "Тепло.", cat: "other" },
-            { de: "Es ist heiß.", ru: "Жарко.", cat: "other" },
-            { de: "Es ist kühl.", ru: "Прохладно.", cat: "other" },
-            { de: "Es ist sonnig.", ru: "Солнечно.", cat: "other" },
-            { de: "Es ist bewölkt.", ru: "Облачно.", cat: "other" },
-            { de: "Es ist windig.", ru: "Ветрено.", cat: "other" },
-            { de: "Es ist nass.", ru: "Мокро.", cat: "other" },
-            { de: "Es sind 20 Grad.", ru: "Сейчас 20 градусов.", cat: "other" },
-            { de: "Es sind minus 5 Grad.", ru: "Сейчас минус 5 градусов.", cat: "other" },
-            { de: "Heute sind es 15 Grad.", ru: "Сегодня 15 градусов.", cat: "other" },
-            { de: "Ich friere.", ru: "Я мерзну.", cat: "other" },
-            { de: "Ich schwitze.", ru: "Я потею.", cat: "other" },
-            { de: "Mir ist kalt.", ru: "Мне холодно.", cat: "other" },
-            { de: "Mir ist heiß.", ru: "Мне жарко.", cat: "other" },
-            { de: "Mir ist warm.", ru: "Мне тепло.", cat: "other" },
-            { de: "Wegen des Regens bleibe ich zu Hause.", ru: "Из-за дождя я остаюсь дома.", cat: "other" },
-            { de: "Bei schönem Wetter gehe ich spazieren.", ru: "В хорошую погоду я иду гулять.", cat: "other" },
-            { de: "Ich bleibe heute zu Hause.", ru: "Я остаюсь сегодня дома.", cat: "other" },
-            { de: "Ich bleibe morgen zu Hause.", ru: "Я останусь завтра дома.", cat: "other" },
-            { de: "Das Spiel findet bei Regen nicht statt.", ru: "Игра не состоится при дожде.", cat: "other" },
-            { de: "Heute schwitze ich so sehr.", ru: "Сегодня я так сильно потею.", cat: "other" },
-            { de: "Im Sommer schwitze ich oft.", ru: "Летом я часто потею.", cat: "other" },
-            { de: "Heute friere ich so sehr.", ru: "Сегодня я так сильно мерзну.", cat: "other" },
-            { de: "Im Winter friere ich oft.", ru: "Зимой я часто мерзну.", cat: "other" },
-            { de: "Mir ist heute so kalt.", ru: "Мне сегодня так холодно.", cat: "other" },
-            { de: "Mir ist heute so heiß.", ru: "Мне сегодня так жарко.", cat: "other" },
-            { de: "Morgen sind es minus 10 Grad.", ru: "Завтра будет минус 10 градусов.", cat: "other" },
-            { de: "Heute sind es genau 0 Grad.", ru: "Сегодня ровно 0 градусов.", cat: "other" },
-            { de: "Es gibt viele Wolken.", ru: "Много облаков.", cat: "other" },
-            { de: "Es wird dunkel.", ru: "Темнеет.", cat: "other" },
-            { de: "Es klärt sich auf.", ru: "Проясняется.", cat: "other" },
-            { de: "Es donnert.", ru: "Гремит гром.", cat: "other" },
-            { de: "Es blitzt.", ru: "Сверкает молния.", cat: "other" },
-            { de: "Es hagelt.", ru: "Идет град.", cat: "other" },
-];
-
- // БАЗА ДАННЫХ ДЛЯ ПОКУПОК (25 базовых карточек)
-        const shoppingPhrases = [
-            { de: "Guten Tag!", ru: "Добрый день!", cat: "other" },
-            { de: "Ich möchte etwas kaufen.", ru: "Я хочу что-то купить.", cat: "other" },
-            { de: "Wo finde ich das Brot?", ru: "Где я найду хлеб?", cat: "neu" },
-            { de: "Wo ist die Milch?", ru: "Где молоко?", cat: "fem" },
-            { de: "Haben Sie Äpfel?", ru: "У вас есть яблоки?", cat: "other" },
-            { de: "Wie viel kostet das?", ru: "Сколько это стоит?", cat: "other" },
-            { de: "Das ist zu teuer.", ru: "Это слишком дорого.", cat: "other" },
-            { de: "Ich nehme ein Kilo.", ru: "Я возьму один килограмм.", cat: "neu" },
-            { de: "Ich brauche einen Beutel.", ru: "Мне нужен пакет.", cat: "masc" },
-            { de: "Kann ich mit Karte zahlen?", ru: "Можно платить картой?", cat: "fem" },
-            { de: "Ich zahle bar.", ru: "Я плачу наличными.", cat: "other" },
-            { de: "Die Kasse, bitte.", ru: "Кассу, пожалуйста.", cat: "fem" },
-            { de: "Ich war gestern hier.", ru: "Я был здесь вчера.", cat: "other" },
-            { de: "Ich bin jetzt im Supermarkt.", ru: "Я сейчас в супермаркете.", cat: "masc" },
-            { de: "Ich werde morgen wiederkommen.", ru: "Я вернусь завтра.", cat: "other" },
-            { de: "Haben Sie frisches Gemüse?", ru: "У вас есть свежие овощи?", cat: "neu" },
-            { de: "Das ist frisch.", ru: "Это свежее.", cat: "other" },
-            { de: "Ich suche den Käse.", ru: "Я ищу сыр.", cat: "masc" },
-            { de: "Können Sie mir helfen?", ru: "Можете мне помочь?", cat: "other" },
-            { de: "Danke schön!", ru: "Большое спасибо!", cat: "other" },
-            { de: "Bitte!", ru: "Пожалуйста!", cat: "other" },
-            { de: "Ich habe eine Einkaufsliste.", ru: "У меня есть список покупок.", cat: "fem" },
-            { de: "Das reicht.", ru: "Этого достаточно.", cat: "other" },
-            { de: "Ich kaufe schnell.", ru: "Я покупаю быстро.", cat: "other" },
-            { de: "Auf Wiedersehen!", ru: "До свидания!", cat: "other" }
-        ];
-
-        // Переменная, которая указывает, какой список сейчас открыт (по умолчанию погода)
-        let currentPhrases = phrases; 
-
-        const colors = {
-            fem: "#FFEBEE",
-            neu: "#E8F5E9",
-            masc: "#E3F2FD",
-            other: "#FFFDE7"
-        };
-
-        let currentIndex = 0;
-
-        const mainCard = document.getElementById('mainCard');
-        const cardCounter = document.getElementById('cardCounter');
-        const cardGerman = document.getElementById('cardGerman');
-        const cardRussian = document.getElementById('cardRussian');
-        
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const topicWeather = document.getElementById('topicWeather');
-        const topicShopping = document.getElementById('topicShopping'); // Добавили новую кнопку в переменные
-        
-        const clickModeSection = document.getElementById('clickModeSection');
-
-        function updateCard() {
-            const item = currentPhrases[currentIndex];
-            cardGerman.innerText = item.de;
-            cardRussian.innerText = item.ru;
-            cardCounter.innerText = `${currentIndex + 1} / ${currentPhrases.length}`;
-            mainCard.style.backgroundColor = colors[item.cat];
+        // Мы заменим этот пустой скрипт в следующем шаге!
+        function startLevel(level) {
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('card-screen').style.display = 'flex';
         }
-
-        mainCard.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % currentPhrases.length;
-            updateCard();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % currentPhrases.length;
-            updateCard();
-        });
-
-        prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + currentPhrases.length) % currentPhrases.length;
-            updateCard();
-        });
-
-        // ЛОГИКА ДЛЯ КНОПКИ ПОГОДЫ
-        topicWeather.addEventListener('click', () => {
-            currentPhrases = phrases; // Включаем карточки погоды
-            currentIndex = 0;
-            
-            const isOpen = clickModeSection.style.display !== 'none' && topicWeather.classList.contains('active');
-            if (isOpen) {
-                clickModeSection.style.display = 'none';
-                topicWeather.classList.remove('active');
-            } else {
-                clickModeSection.style.display = 'block';
-                topicWeather.classList.add('active');
-                topicShopping.classList.remove('active'); // Выключаем кнопку покупок
-                updateCard();
-            }
-        });
-
-        // ЛОГИКА ДЛЯ КНОПКИ ПОКУПОК
-        topicShopping.addEventListener('click', () => {
-            currentPhrases = shoppingPhrases; // Включаем карточки покупок
-            currentIndex = 0;
-            
-            const isOpen = clickModeSection.style.display !== 'none' && topicShopping.classList.contains('active');
-            if (isOpen) {
-                clickModeSection.style.display = 'none';
-                topicShopping.classList.remove('active');
-            } else {
-                clickModeSection.style.display = 'block';
-                topicShopping.classList.add('active');
-                topicWeather.classList.remove('active'); // Выключаем кнопку погоды
-                updateCard();
-            }
-        });
-
-        updateCard();
+        function backToMenu() {
+            document.getElementById('menu-screen').style.display = 'flex';
+            document.getElementById('card-screen').style.display = 'none';
+        }
+        function flipCard() {}
+        function prevCard(e) { e.stopPropagation(); }
+        function nextCard(e) { e.stopPropagation(); }
     </script>
 </body>
 </html>
