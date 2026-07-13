@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Немецкий Блокнот (По родам)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px 10px;
+        }
+        .container {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .legend {
+            width: 100%;
+            background: #2a2a2a;
+            border-radius: 16px;
+            padding: 15px;
+            color: #fff;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .card-box {
+            width: 100%;
+            perspective: 1000px;
+        }
+        .card {
+            width: 100%;
+            min-height: 320px;
+            border-radius: 28px;
+            padding: 40px 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s;
+            position: relative;
+        }
+        .card:active {
+            transform: scale(0.96);
+        }
+        .counter {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 13px;
+            font-weight: bold;
+            opacity: 0.4;
+            letter-spacing: 1px;
+        }
+        .german {
+            font-size: 28px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 20px;
+            line-height: 1.35;
+        }
+        .russian {
+            font-size: 19px;
+            font-weight: 500;
+            color: #444;
+            line-height: 1.4;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            padding-top: 15px;
+            width: 80%;
+        }
+        .controls {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        .btn {
+            flex: 1;
+            background: #333;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: background 0.2s, transform 0.1s;
+            text-align: center;
+        }
+        .btn:active {
+            transform: scale(0.95);
+            background: #444;
+        }
+        .mode-toggle {
+            width: 100%;
+            background: #ffae75;
+            color: #111;
+            border: none;
+            padding: 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(255,174,117,0.3);
+        }
+        .mode-toggle:active {
+            transform: scale(0.98);
+        }
+        .topics-row {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .topic-tile {
+            flex: 1;
+            min-width: 130px;
+            background: #ffae75;
+            color: #111;
+            border: none;
+            padding: 14px 10px;
+            border-radius: 16px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(255,174,117,0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .topic-tile:active {
+            transform: scale(0.98);
+        }
+        .topic-tile.active {
+            opacity: 0.75;
+        }
+        .topic-tile .topic-ru {
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .topic-tile .topic-de {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.75;
+        }
+        .hidden-feed {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .feed-card {
+            width: 100%;
+            min-height: 140px;
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .feed-german {
+            font-size: 22px;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 8px;
+        }
+        .feed-russian {
+            font-size: 15px;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="legend" style="flex-wrap: wrap; gap: 5px;">
+            <div class="legend-item"><div class="dot" style="background: #FFEBEE; border: 1px solid #ff7b93;"></div> Женский род (die)</div>
+            <div class="legend-item"><div class="dot" style="background: #E8F5E9; border: 1px solid #4CAF50;"></div> Средний род (das)</div>
+            <div class="legend-item"><div class="dot" style="background: #E3F2FD; border: 1px solid #2196F3;"></div> Мужской род (der)</div>
+            <div class="legend-item"><div class="dot" style="background: #FFFDE7; border: 1px solid #FFEB3B;"></div> Безличные / Общие</div>
+        </div>
+
+        <div class="topics-row" id="topicsRow">
+            <button class="topic-tile" id="topicWeather" data-target="clickModeSection">
+                <span class="topic-ru">Погода</span>
+                <span class="topic-de">Wetter</span>
+            </button>
+        </div>
+
+        <!-- КАРТОЧКИ: ПОГОДА -->
+        <div class="card-box" id="clickModeSection" style="display: none;">
+            <div class="card" id="mainCard">
+                <div class="counter" id="cardCounter">1 / 150</div>
+                <div class="german" id="cardGerman"></div>
+                <div class="russian" id="cardRussian"></div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" id="prevBtn">⬅️ Назад</button>
+                <button class="btn" id="nextBtn">Вперед ➡️</button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+        const phrases = [
+            { de: "Die Sonne scheint.", ru: "Солнце светит.", cat: "fem" },
+            { de: "Ich genieße die Sonne.", ru: "Я наслаждаюсь солнцем.", cat: "fem" },
+            { de: "Im Frühling scheint die Sonne.", ru: "Весной светит солнце.", cat: "fem" },
+            { de: "Im Sommer ist es sonnig.", ru: "Летом солнечно.", cat: "fem" },
+            { de: "Die Temperatur ist hoch.", ru: "Температура высокая.", cat: "fem" },
+            { de: "Die Temperatur ist niedrig.", ru: "Температура низкая.", cat: "fem" },
+            { de: "Die Temperatur wechselt jeden Tag.", ru: "Температура меняется каждый день.", cat: "fem" },
+            { de: "Ich genieße die Jahreszeit.", ru: "Я наслаждаюсь этим временем года.", cat: "fem" },
+            { de: "Wegen der Kälte bleibe ich zu Hause.", ru: "Из-за холода я остаюсь дома.", cat: "fem" },
+            { de: "Bei Sonne gehe ich nicht mit Regenschirm.", ru: "В солнечную погоду я не хожу с зонтом.", cat: "fem" },
+            { de: "Das Konzert findet bei Sonne statt.", ru: "Концерт состоится в солнечную погоду.", cat: "fem" },
+            { de: "Morgen scheint die Sonne sonnig.", ru: "Завтра солнце будет светить солнечно.", cat: "fem" },
+            { de: "Im Sommer scheint die Sonne heiß.", ru: "Летом солнце светит жарко.", cat: "fem" },
+            { de: "Im Frühling scheint die Sonne kühl.", ru: "Весной солнце светит прохладно.", cat: "fem" },
+            { de: "Die Wolke wechselt schnell.", ru: "Облако быстро меняется.", cat: "fem" },
+            { de: "Es gibt eine große Wolke.", ru: "Есть большое облако.", cat: "fem" },
+            { de: "Die Sonne ist heute heiß.", ru: "Солнце сегодня жаркое.", cat: "fem" },
+            { de: "Ich liebe die Sonne.", ru: "Я люблю солнце.", cat: "fem" },
+            { de: "Die Sonne bringt Wärme.", ru: "Солнце приносит тепло.", cat: "fem" },
+            { de: "Die Temperatur steigt.", ru: "Температура растет.", cat: "fem" },
+            { de: "Die Temperatur sinkt.", ru: "Температура падает.", cat: "fem" },
+            { de: "Es gibt eine dicke Wolke.", ru: "Есть густое облако.", cat: "fem" },
+            { de: "Die Sonne geht auf.", ru: "Солнце встает.", cat: "fem" },
+            { de: "Die Sonne geht unter.", ru: "Солнце садится.", cat: "fem" },
+            { de: "Die Sonne wärmt uns.", ru: "Солнце греет нас.", cat: "fem" },
+            { de: "Die Temperatur ist angenehm.", ru: "Температура приятная.", cat: "fem" },
+            { de: "Die Jahreszeit ist schön.", ru: "Время года прекрасное.", cat: "fem" },
+            { de: "Welche Jahreszeit ist es?", ru: "Какое сейчас время года?", cat: "fem" },
+            { de: "Die Wolke bringt Regen.", ru: "Облако приносит дождь.", cat: "fem" },
+            { de: "Ich sehe die Sonne.", ru: "Я вижу солнце.", cat: "fem" },
+            { de: "Die Sonne blendet mich.", ru: "Солнце слепит меня.", cat: "fem" },
+            { de: "Die Temperatur ist perfekt.", ru: "Температура идеальная.", cat: "fem" },
+            { de: "Jede Jahreszeit hat Charme.", ru: "У каждого времени года есть шарм.", cat: "fem" },
+            { de: "Die Wolke zieht vorbei.", ru: "Облако проходит мимо.", cat: "fem" },
+            { de: "Die Sonne versteckt sich.", ru: "Солнце прячется.", cat: "fem" },
+            { de: "Ohne die Sonne ist es kalt.", ru: "Без солнца холодно.", cat: "fem" },
+            { de: "Die Temperatur im Sommer ist hoch.", ru: "Температура летом высокая.", cat: "fem" },
+            { de: "Die Temperatur im Winter ist niedrig.", ru: "Температура зимой низкая.", cat: "fem" },
+            { de: "Das Wetter wechselt oft.", ru: "Погода часто меняется.", cat: "neu" },
+            { de: "Ich genieße das warme Wetter.", ru: "Я наслаждаюсь теплой погодой.", cat: "neu" },
+            { de: "Das Picknick findet bei gutem Wetter statt.", ru: "Пикник состоится при хорошей погоде.", cat: "neu" },
+            { de: "Es gibt Gewitter.", ru: "Гроза.", cat: "neu" },
+            { de: "Das Gewitter findet im Sommer statt.", ru: "Гроза бывает летом.", cat: "neu" },
+            { de: "Das Gewitter findet heute statt.", ru: "Гроза случится сегодня.", cat: "neu" },
+            { de: "Ich genieße das Wetter heute.", ru: "Я наслаждаюсь погодой сегодня.", cat: "neu" },
+            { de: "Das Wetter ist heute nass.", ru: "Погода сегодня сырая.", cat: "neu" },
+            { de: "Das Wetter ist morgen windig.", ru: "Погода завтра будет ветреной.", cat: "neu" },
+            { de: "Das Wetter ist im Herbst nass.", ru: "Погода осенью сырая.", cat: "neu" },
+            { de: "Das Gewitter zieht auf.", ru: "Гроза надвигается.", cat: "neu" },
+            { de: "Das Wetter ist herrlich.", ru: "Погода чудесная.", cat: "neu" },
+            { de: "Das Gewitter macht mir Angst.", ru: "Гроза меня пугает.", cat: "neu" },
+            { de: "Das Picknick macht Spaß.", ru: "Пикник приносит удовольствие.", cat: "neu" },
+            { de: "Das Wetter bleibt schön.", ru: "Погода остается хорошей.", cat: "neu" },
+            { de: "Das Wetter wird schlecht.", ru: "Погода портится.", cat: "neu" },
+            { de: "Das Gewitter ist vorbei.", ru: "Гроза прошла.", cat: "neu" },
+            { de: "Das Wetter im Frühling ist wechselhaft.", ru: "Погода весной изменчивая.", cat: "neu" },
+            { de: "Das Wetter im Sommer ist stabil.", ru: "Погода летом стабильная.", cat: "neu" },
+            { de: "Wie ist das Wetter?", ru: "Какая погода?", cat: "neu" },
+            { de: "Das Wetter gefällt mir.", ru: "Погода мне нравится.", cat: "neu" },
+            { de: "Das Gewitter bringt Abkühlung.", ru: "Гроза приносит прохладу.", cat: "neu" },
+            { de: "Das Picknick fällt aus.", ru: "Пикник отменяется.", cat: "neu" },
+            { de: "Das Wetter im Winter ist eisig.", ru: "Погода зимой ледяная.", cat: "neu" },
+            { de: "Das Wetter bricht um.", ru: "Погода резко меняется.", cat: "neu" },
+            { de: "Das Gewitter leuchtet.", ru: "Гроза сверкает.", cat: "neu" },
+            { de: "Das Wetter erlaubt Spaziergänge.", ru: "Погода позволяет гулять.", cat: "neu" },
+            { de: "Das Wetter ist wunderbar.", ru: "Погода прекрасная.", cat: "neu" },
+            { de: "Das Gewitter ist laut.", ru: "Гроза громкая.", cat: "neu" },
+            { de: "Das Wetter ändert sich.", ru: "Погода меняется.", cat: "neu" },
+            { de: "Das Picknick wird verschoben.", ru: "Пикник переносится.", cat: "neu" },
+            { de: "Das Wetter ist ungemütlich.", ru: "Погода неуютная.", cat: "neu" },
+            { de: "Das Gewitter reinigt die Luft.", ru: "Гроза очищает воздух.", cat: "neu" },
+            { de: "Ich mag das Wetter im Mai.", ru: "Мне нравится погода в мае.", cat: "neu" },
+            { de: "Das Wetter überrascht uns.", ru: "Погода удивляет нас.", cat: "neu" },
+            { de: "Das Gewitter verzieht sich.", ru: "Гроза уходит.", cat: "neu" },
+            { de: "Das Wetter wird milder.", ru: "Погода становится мягче.", cat: "neu" },
+            { de: "Der Wind weht.", ru: "Ветер дует.", cat: "masc" },
+            { de: "Der Wind bläst.", ru: "Ветер дует.", cat: "masc" },
+            { de: "Es gibt Regen.", ru: "Идет дождь (Дождь есть).", cat: "masc" },
+            { de: "Es gibt Schnee.", ru: "Идет снег (Снег есть).", cat: "masc" },
+            { de: "Der Wind weht heute stark und kalt.", ru: "Ветер дует сегодня сильно и холодно.", cat: "masc" },
+            { de: "Der Wind bläst im Herbst windig.", ru: "Ветер дует осенью ветрено.", cat: "masc" },
+            { de: "Morgen weht der Wind kalt.", ru: "Завтра ветер будет дуть холодно.", cat: "masc" },
+            { de: "Der Regen hört auf.", ru: "Дождь прекращается.", cat: "masc" },
+            { de: "Der Schnee schmilzt.", ru: "Снег тает.", cat: "masc" },
+            { de: "Der Wind treibt die Wolken.", ru: "Ветер гонит облака.", cat: "masc" },
+            { de: "Ich genieße den Sommer.", ru: "Я наслаждаюсь летом.", cat: "masc" },
+            { de: "Ich genieße den Frühling.", ru: "Я наслаждаюсь весной.", cat: "masc" },
+            { de: "Ich genieße den Herbst.", ru: "Я наслаждаюсь осенью.", cat: "masc" },
+            { de: "Ich genieße den Winter.", ru: "Я наслаждаюсь зимой.", cat: "masc" },
+            { de: "Bei Regen nehme ich den Regenschirm.", ru: "В дождь я беру зонтик.", cat: "masc" },
+            { de: "Heute nehme ich den Regenschirm.", ru: "Сегодня я беру зонтик.", cat: "masc" },
+            { de: "Morgen nehme ich den Regenschirm.", ru: "Завтра я возьму зонтик.", cat: "masc" },
+            { de: "Im Herbst nehme ich den Regenschirm.", ru: "Осенью я беру зонтик.", cat: "masc" },
+            { de: "Der Regen trommelt.", ru: "Дождь барабанит.", cat: "masc" },
+            { de: "Der Schnee fällt leise.", ru: "Снег падает тихо.", cat: "masc" },
+            { de: "Der Wind heult.", ru: "Ветер воет.", cat: "masc" },
+            { de: "Der Regenschirm ist kaputt.", ru: "Зонтик сломан.", cat: "masc" },
+            { de: "Der Frühling bringt Blumen.", ru: "Весна приносит цветы.", cat: "masc" },
+            { de: "Der Sommer bringt Hitze.", ru: "Лето приносит жару.", cat: "masc" },
+            { de: "Der Herbst bringt Blätter.", ru: "Осень приносит листья.", cat: "masc" },
+            { de: "Der Winter bringt Eis.", ru: "Зима приносит лед.", cat: "masc" },
+            { de: "Der Regen erfrischt.", ru: "Дождь освежает.", cat: "masc" },
+            { de: "Der Schnee glänzt.", ru: "Снег блестит.", cat: "masc" },
+            { de: "Der Wind legt sich.", ru: "Ветер утихает.", cat: "masc" },
+            { de: "Wo ist der Regenschirm?", ru: "Где зонтик?", cat: "masc" },
+            { de: "Der Grad zeigt die Kälte.", ru: "Градус показывает холод.", cat: "masc" },
+            { de: "Der Regen wird stärker.", ru: "Дождь усиливается.", cat: "masc" },
+            { de: "Der Schnee taut.", ru: "Снег тает.", cat: "masc" },
+            { de: "Der Wind kommt von Norden.", ru: "Ветер дует с севера.", cat: "masc" },
+            { de: "Der Regenschirm schützt mich.", ru: "Зонт защищает меня.", cat: "masc" },
+            { de: "Der Herbst ist golden.", ru: "Осень золотая.", cat: "masc" },
+            { de: "Der Winter ist lang.", ru: "Зима долгая.", cat: "masc" },
+            { de: "Der Frühling ist da.", ru: "Весна пришла.", cat: "masc" },
+            { de: "Es regnet.", ru: "Идет дождь.", cat: "other" },
+            { de: "Es schneit.", ru: "Идет снег.", cat: "other" },
+            { de: "Es ist kalt.", ru: "Холодно.", cat: "other" },
+            { de: "Es ist warm.", ru: "Тепло.", cat: "other" },
+            { de: "Es ist heiß.", ru: "Жарко.", cat: "other" },
+            { de: "Es ist kühl.", ru: "Прохладно.", cat: "other" },
+            { de: "Es ist sonnig.", ru: "Солнечно.", cat: "other" },
+            { de: "Es ist bewölkt.", ru: "Облачно.", cat: "other" },
+            { de: "Es ist windig.", ru: "Ветрено.", cat: "other" },
+            { de: "Es ist nass.", ru: "Мокро.", cat: "other" },
+            { de: "Es sind 20 Grad.", ru: "Сейчас 20 градусов.", cat: "other" },
+            { de: "Es sind minus 5 Grad.", ru: "Сейчас минус 5 градусов.", cat: "other" },
+            { de: "Heute sind es 15 Grad.", ru: "Сегодня 15 градусов.", cat: "other" },
+            { de: "Ich friere.", ru: "Я мерзну.", cat: "other" },
+            { de: "Ich schwitze.", ru: "Я потею.", cat: "other" },
+            { de: "Mir ist kalt.", ru: "Мне холодно.", cat: "other" },
+            { de: "Mir ist heiß.", ru: "Мне жарко.", cat: "other" },
+            { de: "Mir ist warm.", ru: "Мне тепло.", cat: "other" },
+            { de: "Wegen des Regens bleibe ich zu Hause.", ru: "Из-за дождя я остаюсь дома.", cat: "other" },
+            { de: "Bei schönem Wetter gehe ich spazieren.", ru: "В хорошую погоду я иду гулять.", cat: "other" },
+            { de: "Ich bleibe heute zu Hause.", ru: "Я остаюсь сегодня дома.", cat: "other" },
+            { de: "Ich bleibe morgen zu Hause.", ru: "Я останусь завтра дома.", cat: "other" },
+            { de: "Das Spiel findet bei Regen nicht statt.", ru: "Игра не состоится при дожде.", cat: "other" },
+            { de: "Heute schwitze ich so sehr.", ru: "Сегодня я так сильно потею.", cat: "other" },
+            { de: "Im Sommer schwitze ich oft.", ru: "Летом я часто потею.", cat: "other" },
+            { de: "Heute friere ich so sehr.", ru: "Сегодня я так сильно мерзну.", cat: "other" },
+            { de: "Im Winter friere ich oft.", ru: "Зимой я часто мерзну.", cat: "other" },
+            { de: "Mir ist heute so kalt.", ru: "Мне сегодня так холодно.", cat: "other" },
+            { de: "Mir ist heute so heiß.", ru: "Мне сегодня так жарко.", cat: "other" },
+            { de: "Morgen sind es minus 10 Grad.", ru: "Завтра будет минус 10 градусов.", cat: "other" },
+            { de: "Heute sind es genau 0 Grad.", ru: "Сегодня ровно 0 градусов.", cat: "other" },
+            { de: "Es gibt viele Wolken.", ru: "Много облаков.", cat: "other" },
+            { de: "Es wird dunkel.", ru: "Темнеет.", cat: "other" },
+            { de: "Es klärt sich auf.", ru: "Проясняется.", cat: "other" },
+            { de: "Es donnert.", ru: "Гремит гром.", cat: "other" },
+            { de: "Es blitzt.", ru: "Сверкает молния.", cat: "other" },
+            { de: "Es hagelt.", ru: "Идет град.", cat: "other" },
+        ];
+
+        const colors = {
+            fem: "#FFEBEE",
+            neu: "#E8F5E9",
+            masc: "#E3F2FD",
+            other: "#FFFDE7"
+        };
+
+        let currentIndex = 0;
+
+        const mainCard = document.getElementById('mainCard');
+        const cardCounter = document.getElementById('cardCounter');
+        const cardGerman = document.getElementById('cardGerman');
+        const cardRussian = document.getElementById('cardRussian');
+        
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const topicWeather = document.getElementById('topicWeather');
+        
+        const clickModeSection = document.getElementById('clickModeSection');
+
+        function updateCard() {
+            const item = phrases[currentIndex];
+            cardGerman.innerText = item.de;
+            cardRussian.innerText = item.ru;
+            cardCounter.innerText = `${currentIndex + 1} / ${phrases.length}`;
+            mainCard.style.backgroundColor = colors[item.cat];
+        }
+
+        mainCard.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % phrases.length;
+            updateCard();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % phrases.length;
+            updateCard();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + phrases.length) % phrases.length;
+            updateCard();
+        });
+
+        topicWeather.addEventListener('click', () => {
+            const isOpen = clickModeSection.style.display !== 'none';
+            if (isOpen) {
+                clickModeSection.style.display = 'none';
+                topicWeather.classList.remove('active');
+            } else {
+                clickModeSection.style.display = 'block';
+                topicWeather.classList.add('active');
+                updateCard();
+            }
+        });
+
+        updateCard();
+    </script>
+</body>
+</html>
