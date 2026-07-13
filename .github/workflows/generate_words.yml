@@ -21,7 +21,15 @@ jobs:
           python-version: '3.10'
 
       - name: Run Generator Script
+        env:
+          TOPIC: ${{ github.event.inputs.topic }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}  # Передаем ключ из вашего сейфа!
         run: |
-          echo "Робот успешно запущен!"
-          echo "Тема для генерации: ${{ github.event.inputs.topic }}"
-          # На следующем этапе здесь будет запуск нашего ИИ-скрипта!
+          python generator.py
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add index.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Автоматическое обновление темы: ${{ github.event.inputs.topic }}" && git push)
