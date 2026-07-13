@@ -4,74 +4,197 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Немецкий Блокнот (По родам)</title>
-    <style>
+   <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            background-color: #1a1a1a;
-            color: #333;
+            background-color: #fcf8f2; /* Мягкий кремовый фон */
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px 10px;
+            color: #4a3e3d; /* Темно-коричневый текст */
         }
-        .container {
+
+        .phone-container {
             width: 100%;
-            max-width: 450px;
+            max-width: 410px;
+            height: 100vh;
+            max-height: 840px;
+            background-color: #fcf8f2;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 20px;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
         }
-        .legend {
-            width: 100%;
-            background: #2a2a2a;
-            border-radius: 16px;
-            padding: 15px;
-            color: #fff;
+
+        /* Стильный заголовок */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            margin-top: 10px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #4a3e3d;
+            text-shadow: 2px 2px 0px #fff;
+            display: inline-block;
+            position: relative;
+        }
+
+        /* Список уровней-полосочек */
+        .levels-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+            padding-bottom: 20px;
+        }
+
+        /* Сама игровая "полосочка" уровня */
+        .level-card {
+            background-color: #fff;
+            border: 3px solid #4a3e3d; /* Толстая мультяшная обводка */
+            border-radius: 20px; /* Круглые углы */
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #4a3e3d; /* Объемная тень */
+            transition: all 0.1s ease;
+        }
+
+        /* Эффект нажатия */
+        .level-card:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #4a3e3d;
+        }
+
+        .level-card-title {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .level-card-subtitle {
             font-size: 13px;
-            display: flex;
-            justify-content: space-around;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            color: #7d706e;
+            font-weight: 500;
         }
-        .legend-item {
+
+        /* Контейнер для шкалы прогресса */
+        .progress-container {
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: space-between;
+            margin-top: 5px;
+            gap: 10px;
         }
-        .dot {
-            width: 12px;
+
+        /* Серая дорожка прогресс-бара */
+        .progress-bar-bg {
+            flex-grow: 1;
             height: 12px;
-            border-radius: 50%;
+            background-color: #e8e2da;
+            border: 2px solid #4a3e3d;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
         }
-        .card-box {
-            width: 100%;
-            perspective: 1000px;
+
+        /* Яркая заливка прогресса */
+        .progress-bar-fill {
+            height: 100%;
+            background-color: #2bd14e; /* Зеленый цвет */
+            border-right: 2px solid #4a3e3d;
+            width: 0%;
+            transition: width 0.3s ease;
         }
+
+        .progress-text {
+            font-size: 11px;
+            font-weight: bold;
+            color: #4a3e3d;
+            white-space: nowrap;
+        }
+
+        /* Цвета для разных уровней */
+        .color-blue { background-color: #bae1ff; }
+        .color-green { background-color: #baffc9; }
+        .color-orange { background-color: #ffdfba; }
+        .color-purple { background-color: #e8d7ff; }
+        .color-yellow { background-color: #ffffba; }
+
+        /* ЭКРАН КАРТОЧКИ */
+        .card-screen {
+            display: none; /* Прячем до клика */
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        /* Кнопка "Назад" */
+        .back-btn {
+            align-self: flex-start;
+            background-color: #fff;
+            border: 3px solid #4a3e3d;
+            border-radius: 15px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #4a3e3d;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.1s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #4a3e3d;
+        }
+
+        /* Сама карточка со словом */
         .card {
+            background-color: #fff;
+            border: 4px solid #4a3e3d;
+            border-radius: 28px;
             width: 100%;
             min-height: 320px;
-            border-radius: 28px;
-            padding: 40px 25px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 30px;
             text-align: center;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+            position: relative;
+            box-shadow: 0 8px 0 #4a3e3d;
             cursor: pointer;
             user-select: none;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.3s;
-            position: relative;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+
         .card:active {
             transform: scale(0.96);
         }
+
         .counter {
             position: absolute;
             top: 20px;
@@ -81,6 +204,7 @@
             opacity: 0.4;
             letter-spacing: 1px;
         }
+
         .german {
             font-size: 28px;
             font-weight: 800;
@@ -88,15 +212,18 @@
             margin-bottom: 20px;
             line-height: 1.35;
         }
+
         .russian {
             font-size: 19px;
             font-weight: 500;
             color: #444;
             line-height: 1.4;
-            border-top: 1px solid rgba(0,0,0,0.1);
+            border-top: 2px dashed #4a3e3d;
             padding-top: 15px;
             width: 80%;
         }
+
+        /* Кнопки управления */
         .controls {
             display: flex;
             width: 100%;
@@ -104,104 +231,33 @@
             gap: 15px;
             margin-top: 10px;
         }
+
         .btn {
             flex: 1;
-            background: #333;
-            color: #fff;
-            border: 1px solid #444;
             padding: 16px;
-            border-radius: 16px;
             font-size: 15px;
             font-weight: bold;
+            border: 3px solid #4a3e3d;
+            border-radius: 16px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 6px 0 #4a3e3d;
+            transition: all 0.1s ease;
             text-align: center;
         }
+
         .btn:active {
-            transform: scale(0.95);
-            background: #444;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #4a3e3d;
         }
-        .mode-toggle {
-            width: 100%;
-            background: #ffae75;
-            color: #111;
-            border: none;
-            padding: 14px;
-            border-radius: 16px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(255,174,117,0.3);
+
+        .btn-prev {
+            background-color: #ffb3ba;
+            color: #4a3e3d;
         }
-        .mode-toggle:active {
-            transform: scale(0.98);
-        }
-        .topics-row {
-            width: 100%;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-        .topic-tile {
-            flex: 1;
-            min-width: 130px;
-            background: #ffae75;
-            color: #111;
-            border: none;
-            padding: 14px 10px;
-            border-radius: 16px;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(255,174,117,0.3);
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            transition: transform 0.1s, opacity 0.2s;
-        }
-        .topic-tile:active {
-            transform: scale(0.98);
-        }
-        .topic-tile.active {
-            opacity: 0.75;
-        }
-        .topic-tile .topic-ru {
-            font-size: 15px;
-            font-weight: 800;
-        }
-        .topic-tile .topic-de {
-            font-size: 12px;
-            font-weight: 500;
-            opacity: 0.75;
-        }
-        .hidden-feed {
-            display: none;
-            width: 100%;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .feed-card {
-            width: 100%;
-            min-height: 140px;
-            border-radius: 20px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        .feed-german {
-            font-size: 22px;
-            font-weight: 800;
-            color: #000;
-            margin-bottom: 8px;
-        }
-        .feed-russian {
-            font-size: 15px;
-            color: #444;
+
+        .btn-next {
+            background-color: #baffc9;
+            color: #4a3e3d;
         }
     </style>
 </head>
