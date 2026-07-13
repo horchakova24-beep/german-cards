@@ -396,7 +396,16 @@
             { de: "Es donnert.", ru: "Гремит гром.", cat: "other" },
             { de: "Es blitzt.", ru: "Сверкает молния.", cat: "other" },
             { de: "Es hagelt.", ru: "Идет град.", cat: "other" },
+];
+
+        // БАЗА ДАННЫХ ДЛЯ ПОКУПОК (Сюда ИИ потом запишет 150 карточек)
+        const shoppingPhrases = [
+            { de: "Der Supermarkt öffnet um 8 Uhr.", ru: "Супермаркет открывается в 8 часов.", cat: "masc" },
+            { de: "Ich kaufe eine Tüte.", ru: "Я покупаю пакет.", cat: "fem" }
         ];
+
+        // Переменная, которая указывает, какой список сейчас открыт (по умолчанию погода)
+        let currentPhrases = phrases; 
 
         const colors = {
             fem: "#FFEBEE",
@@ -415,40 +424,63 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
         const topicWeather = document.getElementById('topicWeather');
+        const topicShopping = document.getElementById('topicShopping'); // Добавили новую кнопку в переменные
         
         const clickModeSection = document.getElementById('clickModeSection');
 
         function updateCard() {
-            const item = phrases[currentIndex];
+            const item = currentPhrases[currentIndex];
             cardGerman.innerText = item.de;
             cardRussian.innerText = item.ru;
-            cardCounter.innerText = `${currentIndex + 1} / ${phrases.length}`;
+            cardCounter.innerText = `${currentIndex + 1} / ${currentPhrases.length}`;
             mainCard.style.backgroundColor = colors[item.cat];
         }
 
         mainCard.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % phrases.length;
+            currentIndex = (currentIndex + 1) % currentPhrases.length;
             updateCard();
         });
 
         nextBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex + 1) % phrases.length;
+            currentIndex = (currentIndex + 1) % currentPhrases.length;
             updateCard();
         });
 
         prevBtn.addEventListener('click', () => {
-            currentIndex = (currentIndex - 1 + phrases.length) % phrases.length;
+            currentIndex = (currentIndex - 1 + currentPhrases.length) % currentPhrases.length;
             updateCard();
         });
 
+        // ЛОГИКА ДЛЯ КНОПКИ ПОГОДЫ
         topicWeather.addEventListener('click', () => {
-            const isOpen = clickModeSection.style.display !== 'none';
+            currentPhrases = phrases; // Включаем карточки погоды
+            currentIndex = 0;
+            
+            const isOpen = clickModeSection.style.display !== 'none' && topicWeather.classList.contains('active');
             if (isOpen) {
                 clickModeSection.style.display = 'none';
                 topicWeather.classList.remove('active');
             } else {
                 clickModeSection.style.display = 'block';
                 topicWeather.classList.add('active');
+                topicShopping.classList.remove('active'); // Выключаем кнопку покупок
+                updateCard();
+            }
+        });
+
+        // ЛОГИКА ДЛЯ КНОПКИ ПОКУПОК
+        topicShopping.addEventListener('click', () => {
+            currentPhrases = shoppingPhrases; // Включаем карточки покупок
+            currentIndex = 0;
+            
+            const isOpen = clickModeSection.style.display !== 'none' && topicShopping.classList.contains('active');
+            if (isOpen) {
+                clickModeSection.style.display = 'none';
+                topicShopping.classList.remove('active');
+            } else {
+                clickModeSection.style.display = 'block';
+                topicShopping.classList.add('active');
+                topicWeather.classList.remove('active'); // Выключаем кнопку погоды
                 updateCard();
             }
         });
