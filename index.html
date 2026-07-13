@@ -410,20 +410,167 @@
     </div>
 
     <script>
-        // Обновленный скрипт переключения экранов без сжатия меню!
-        function startLevel(level) {
-            document.getElementById('menu-screen').style.display = 'none'; // Прячем меню
-            document.getElementById('card-screen').style.display = 'flex'; // Показываем карточки
+        // БАЗА ДАННЫХ (Ваши 50 слов + заглушки для будущих тем)
+        const wordDatabase = {
+            weather: [
+                { de: "Das Wetter ist heute schön.", ru: "Погода сегодня хорошая.", gender: "other" },
+                { de: "Es regnet den ganzen Tag.", ru: "Дождь идет весь день.", gender: "other" },
+                { de: "Wie ist das Wetter?", ru: "Как погода?", gender: "other" },
+                { de: "Es ist sehr kalt draußen.", ru: "На улице очень холодно.", gender: "other" },
+                { de: "Die Sonne scheint hell.", ru: "Солнце светит ярко.", gender: "fem" },
+                { de: "Es ist windig.", ru: "Ветрено.", gender: "other" },
+                { de: "Morgen wird es schneien.", ru: "Завтра будет идти снег.", gender: "other" },
+                { de: "Wie hoch ist die Temperatur?", ru: "Какая температура?", gender: "fem" },
+                { de: "Es sind zwanzig Grad.", ru: "Сейчас двадцать градусов.", gender: "other" },
+                { de: "Der Himmel ist bewölkt.", ru: "Небо покрыто облаками.", gender: "masc" },
+                { de: "Ich mag den Sommer.", ru: "Мне нравится лето.", gender: "masc" },
+                { de: "Der Winter ist kalt.", ru: "Зима холодная.", gender: "masc" },
+                { de: "Es gibt ein Gewitter.", ru: "Гроза.", gender: "neu" },
+                { de: "Der Nebel ist dicht.", ru: "Туман густой.", gender: "masc" },
+                { de: "Es ist warm.", ru: "Тепло.", gender: "other" },
+                { de: "Ich plane eine Reise.", ru: "Я планирую поездку.", gender: "other" },
+                { de: "Wir gehen morgen spazieren.", ru: "Мы завтра идем гулять.", gender: "other" },
+                { de: "Hast du Pläne für das Wochenende?", ru: "У тебя есть планы на выходные?", gender: "other" },
+                { de: "Ich bleibe heute zu Hause.", ru: "Я остаюсь сегодня дома.", gender: "other" },
+                { de: "Treffen wir uns am Samstag?", ru: "Встретимся в субботу?", gender: "other" },
+                { de: "Ich habe keine Zeit.", ru: "У меня нет времени.", gender: "other" },
+                { de: "Wann hast du Zeit?", ru: "Когда у тебя есть время?", gender: "other" },
+                { de: "Das ist eine gute Idee.", ru: "Это хорошая идея.", gender: "fem" },
+                { de: "Ich muss arbeiten.", ru: "Мне нужно работать.", gender: "other" },
+                { de: "Schönes Wochenende!", ru: "Приятных выходных!", gender: "other" }
+            ],
+            shopping: [
+                { de: "Ich brauche eine Tüte, bitte.", ru: "Мне нужен пакет, пожалуйста.", gender: "fem" },
+                { de: "Kann ich mit Karte bezahlen?", ru: "Могу я оплатить картой?", gender: "fem" },
+                { de: "Wo ist das Wechselgeld?", ru: "Где сдача?", gender: "neu" },
+                { de: "Was kostet das?", ru: "Сколько это стоит?", gender: "other" },
+                { de: "Ich möchte das auswählen.", ru: "Я хочу это выбрать.", gender: "other" },
+                { de: "Wo finde ich Milch?", ru: "Где мне найти молоко?", gender: "other" },
+                { de: "Der Supermarkt ist groß.", ru: "Супермаркет большой.", gender: "masc" },
+                { de: "Haben Sie Brot?", ru: "У вас есть хлеб?", gender: "neu" },
+                { de: "Das ist im Angebot.", ru: "Это по скидке (в предложении).", gender: "neu" },
+                { de: "Ich zahle bar.", ru: "Я плачу наличными.", gender: "other" },
+                { de: "Wo ist die Kasse?", ru: "Где касса?", gender: "fem" },
+                { de: "Der Kassenbon, bitte.", ru: "Чек, пожалуйста.", gender: "masc" },
+                { de: "Das ist sehr teuer.", ru: "Это очень дорого.", gender: "other" },
+                { de: "Das ist billig.", ru: "Это дешево.", gender: "other" },
+                { de: "Ich suche Gemüse.", ru: "Я ищу овощи.", gender: "neu" },
+                { de: "Obst ist gesund.", ru: "Фрукты полезны.", gender: "neu" },
+                { de: "Haben Sie eine Kundenkarte?", ru: "У вас есть карта клиента?", gender: "fem" },
+                { de: "Ich möchte das umtauschen.", ru: "Я хочу это обменять.", gender: "other" },
+                { de: "Wo sind die Einkaufswagen?", ru: "Где тележки для покупок?", gender: "masc" },
+                { de: "Einen Moment, bitte.", ru: "Один момент, пожалуйста.", gender: "masc" },
+                { de: "Das macht zehn Euro.", ru: "С вас десять евро.", gender: "other" },
+                { de: "Ich nehme das.", ru: "Я возьму это.", gender: "other" },
+                { de: "Ist das frisch?", ru: "Это свежее?", gender: "other" },
+                { de: "Wir haben heute geschlossen.", ru: "Мы сегодня закрыты.", gender: "other" },
+                { de: "Guten Appetit!", ru: "Приятного аппетита!", gender: "other" }
+            ],
+            // Временные заглушки для остальных тем, которые заполнит ИИ
+            restaurant: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про Ресторан!", gender: "other" }],
+            city: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про Город!", gender: "other" }],
+            health: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про Врача!", gender: "other" }],
+            hotel: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про Жилье!", gender: "other" }],
+            job: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про Работу!", gender: "other" }],
+            hobby: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про Хобби!", gender: "other" }],
+            guests: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про Гостей!", gender: "other" }],
+            emergency: [{ de: "Hier wird bald die KI neue Wörter hinzufügen!", ru: "Здесь скоро ИИ добавит новые слова про ЧС!", gender: "other" }]
+        };
+
+        let currentWords = [];
+        let currentIndex = 0;
+        let showingGerman = true;
+        let savedScrollPosition = 0; // Переменная для запоминания прокрутки!
+
+        // Цветовая схема родов
+        const colors = {
+            masc: '#bae1ff',   // Голубой (мужской)
+            fem: '#ffb3ba',    // Розовый (женский)
+            neu: '#baffc9',    // Зеленый (средний)
+            other: '#ffdfba'   // Желтый (общий)
+        };
+
+        function startLevel(levelKey) {
+            // 1. Запоминаем, насколько глубоко прокручена страница в этот момент
+            savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+            // 2. Загружаем нужные карточки
+            currentWords = wordDatabase[levelKey] || [];
+            currentIndex = 0;
+            showingGerman = true;
+
+            // 3. Переключаем экраны
+            document.getElementById('menu-screen').style.display = 'none';
+            document.getElementById('card-screen').style.display = 'flex';
+
+            // 4. Показываем первую карточку
+            updateCard();
         }
-        
+
         function backToMenu() {
-            document.getElementById('menu-screen').style.display = 'block'; // Показываем меню на весь экран (без flex!)
-            document.getElementById('card-screen').style.display = 'none'; // Прячем карточки
+            // 1. Прячем карточки и показываем меню
+            document.getElementById('menu-screen').style.display = 'block';
+            document.getElementById('card-screen').style.display = 'none';
+
+            // 2. Возвращаем пользователя ровно на ту высоту, где он кликал!
+            setTimeout(() => {
+                window.scrollTo({
+                    top: savedScrollPosition,
+                    behavior: 'instant' // Мгновенный возврат без лишних анимаций
+                });
+            }, 50);
         }
-        
-        function flipCard() {}
-        function prevCard(e) { e.stopPropagation(); }
-        function nextCard(e) { e.stopPropagation(); }
+
+        function updateCard() {
+            if (currentWords.length === 0) return;
+
+            const word = currentWords[currentIndex];
+            const cardElement = document.getElementById('main-card');
+            
+            // Настраиваем счетчик карточек
+            document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${currentWords.length}`;
+            
+            // Задаем цвет фона в зависимости от рода слова
+            const genderColor = colors[word.gender] || colors.other;
+            cardElement.style.backgroundColor = genderColor;
+
+            // Сбрасываем показ на немецкий текст
+            showingGerman = true;
+            document.getElementById('german-text').innerText = word.de;
+            document.getElementById('russian-text').style.display = 'none';
+        }
+
+        function flipCard() {
+            const word = currentWords[currentIndex];
+            const russianTextElement = document.getElementById('russian-text');
+
+            if (showingGerman) {
+                // Показываем перевод
+                russianTextElement.innerText = word.ru;
+                russianTextElement.style.display = 'block';
+                showingGerman = false;
+            } else {
+                // Прячем перевод обратно
+                russianTextElement.style.display = 'none';
+                showingGerman = true;
+            }
+        }
+
+        function nextCard(event) {
+            event.stopPropagation(); // Чтобы карточка не переворачивалась при клике на кнопку
+            if (currentIndex < currentWords.length - 1) {
+                currentIndex++;
+                updateCard();
+            }
+        }
+
+        function prevCard(event) {
+            event.stopPropagation(); // Чтобы карточка не переворачивалась при клике на кнопку
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            }
+        }
     </script>
 </body>
 </html>
