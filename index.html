@@ -410,15 +410,17 @@
     </div>
 
     <script>
-        // Мы заменим этот пустой скрипт в следующем шаге!
+        // Обновленный скрипт переключения экранов без сжатия меню!
         function startLevel(level) {
-            document.getElementById('menu-screen').style.display = 'none';
-            document.getElementById('card-screen').style.display = 'flex';
+            document.getElementById('menu-screen').style.display = 'none'; // Прячем меню
+            document.getElementById('card-screen').style.display = 'flex'; // Показываем карточки
         }
+        
         function backToMenu() {
-            document.getElementById('menu-screen').style.display = 'block'; /* Изменили flex на block, чтобы меню раскрывалось на всю ширину */
-            document.getElementById('card-screen').style.display = 'none';
+            document.getElementById('menu-screen').style.display = 'block'; // Показываем меню на весь экран (без flex!)
+            document.getElementById('card-screen').style.display = 'none'; // Прячем карточки
         }
+        
         function flipCard() {}
         function prevCard(e) { e.stopPropagation(); }
         function nextCard(e) { e.stopPropagation(); }
