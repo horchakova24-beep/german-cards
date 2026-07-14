@@ -1,6 +1,5 @@
 import os
 import sys
-import re
 import json
 import urllib.request
 
@@ -31,7 +30,7 @@ def generate_words():
 
     print(f"Запуск генерации для темы: {topic_name_ru}...")
 
-    # Инструкция для ИИ: требуем живой, современный язык 2026 года и компактный JSON
+    # Инструкция для ИИ
     prompt = f"""
     Ты — молодой, дружелюбный и современный житель Германии в 2026 году. 
     Ты помогаешь составить учебные карточки для изучения живого, разговорного немецкого языка (Alltagssprache).
@@ -40,26 +39,27 @@ def generate_words():
     
     СТРОГИЕ ПРАВИЛА:
     1. Используй исключительно естественную разговорную речь (Umgangssprache), которую используют носители прямо сейчас на улицах Германии в 2026 году.
-    2. Избегай устаревших, чисто книжных, бумажных или официальных слов (например, не пиши "Kaufmannsladen", пиши "Supermarkt"; не пиши "Mobiltelefon", пиши "Handy"). Никакого старого стиля!
+    2. Избегай устаревших, чисто книжных, бумажных или официальных слов. Никакого старого стиля!
     3. Фразы должны быть полезными в реальной жизни.
     4. Для каждой фразы определи род главного немецкого существительного:
        - 'masc' если мужской (der)
        - 'fem' если женский (die)
        - 'neu' если средний (das)
        - 'other' если существительного нет, это множественное число или общее выражение.
-    5. Пиши ответ максимально компактно, без лишних пробелов, не трать токены, чтобы JSON не обрезался в конце, и ОБЯЗАТЕЛЬНО закрой квадратную скобку ']' в конце!
+    5. Пиши ответ максимально компактно, без лишних пробелов и ОБЯЗАТЕЛЬНО закрой квадратную скобку ']' в конце!
     
     Ответ выдай строго в формате JSON списка без объяснений и без ```json. 
     Пример:
     [{{"de": "Kann ich mit Karte zahlen?", "ru": "Могу я оплатить картой?", "gender": "fem"}},{{"de": "Der Kaffee ist echt lecker!", "ru": "Кофе очень вкусный!", "gender": "masc"}}]
     """
 
-    # Чистый рабочий URL (без markdown-скобок!)
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + api_key
+    # Склеиваем URL из частей, чтобы чат не вставил квадратные скобки!
+    domain = "generativelanguage.googleapis.com"
+    path = "/v1beta/models/gemini-flash-latest:generateContent?key="
+    url = "https://" + domain + path + api_key
 
     headers = {"Content-Type": "application/json"}
 
-    # Настройки: отключаем размышления и даем большой лимит на вывод
     data = {
         "contents": [{
             "parts": [{"text": prompt}]
@@ -80,62 +80,49 @@ def generate_words():
             result = json.loads(response.read().decode("utf-8"))
             ai_text = result['candidates'][0]['content']['parts'][0]['text']
 
-            # Чистим ответ на всякий случай
+            # Чистим ответ
             cleaned_text = ai_text.replace("```json", "").replace("```", "").strip()
 
+            # --- УМНЫЙ АВТОРЕМОНТ JSON ---
             try:
+                # Пробуем распарсить как есть
                 new_words = json.loads(cleaned_text)
             except json.JSONDecodeError:
-                # Ответ обрезался посередине. Отрезаем до последнего
-                # полностью завершенного элемента "}" и закрываем массив.
-                last_good = cleaned_text.rfind('}')
-                new_words = None
-                while last_good != -1:
-                    candidate = cleaned_text[:last_good + 1] + "]"
+                print("Предупреждение: Получен поврежденный или оборванный JSON. Запуск авторемонта...")
+                
+                # Находим последнюю закрывающую фигурную скобку (конец целого объекта)
+                last_brace = cleaned_text.rfind('}')
+                if last_brace != -1:
+                    # Обрезаем все до неё включительно и закрываем массив
+                    repaired_text = cleaned_text[:last_brace + 1] + "]"
                     try:
-                        new_words = json.loads(candidate)
-                        break
-                    except json.JSONDecodeError:
-                        last_good = cleaned_text.rfind('}', 0, last_good)
-                if new_words is None:
-                    raise
+                        new_words = json.loads(repaired_text)
+                        print(f"Авторемонт успешен! Удалось спасти {len(new_words)} целых фраз из 25.")
+                    except Exception as repair_error:
+                        print(f"Критическая ошибка авторемонта: {repair_error}")
+                        sys.exit(1)
+                else:
+                    print("Критическая ошибка: В ответе ИИ вообще нет валидных объектов JSON.")
+                    sys.exit(1)
 
-            if len(new_words) < 25:
-                print(f"⚠️ Ответ обрезался, спасли {len(new_words)} из 25 слов. Продолжаем с тем, что есть.")
-
-            print(f"Успешно получено {len(new_words)} слов от ИИ!")
+            print(f"Успешно обработано {len(new_words)} слов!")
+            
     except Exception as e:
         print(f"Ошибка при запросе к ИИ: {e}")
-        print(f"--- Сырой ответ ИИ (для отладки) ---")
-        try:
-            print(ai_text)
-        except:
-            pass
         sys.exit(1)
 
-    # Встраиваем слова в index.html
+    # --- ЗАПИСЬ В ОТДЕЛЬНЫЙ JSON ФАЙЛ ---
     try:
-        with open("index.html", "r", encoding="utf-8") as f:
-            html_content = f.read()
-
-        pattern = rf'({topic}:\s*\[)(.*?)(\])'
-
-        formatted_words = ",\n".join([f'                {{ de: "{w["de"]}", ru: "{w["ru"]}", gender: "{w["gender"]}" }}' for w in new_words])
-        replacement = f"\\1\n{formatted_words}\n            \\3"
-
-        new_html_content, n_subs = re.subn(pattern, replacement, html_content, count=1, flags=re.DOTALL)
-
-        if n_subs == 0:
-            print(f"⚠️ Внимание: тема '{topic}' не найдена в index.html или формат массива не совпал с шаблоном!")
-            sys.exit(1)
-
-        with open("index.html", "w", encoding="utf-8") as f:
-            f.write(new_html_content)
-
-        print("Файл index.html успешно обновлен новыми словами!")
+        os.makedirs("data", exist_ok=True)
+        file_path = f"data/{topic}.json"
+        
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(new_words, f, ensure_ascii=False, indent=4)
+            
+        print(f"Файл {file_path} успешно создан/обновлен новыми словами!")
 
     except Exception as e:
-        print(f"Ошибка при обновлении index.html: {e}")
+        print(f"Ошибка при сохранении JSON-файла: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":
