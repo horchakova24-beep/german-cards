@@ -17,7 +17,7 @@
             background-color: #fcf8f2;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Изменили с center на flex-start, чтобы длинный список не сжимался */
+            align-items: flex-start;
             min-height: 100vh;
             color: #4a3e3d;
         }
@@ -25,12 +25,68 @@
         .phone-container {
             width: 100%;
             max-width: 410px;
-            min-height: 100vh; /* Изменили фиксированную высоту на минимальную */
+            min-height: 100vh;
             background-color: #fcf8f2;
             display: flex;
             flex-direction: column;
             position: relative;
-            padding: 20px;
+            padding: 20px 20px 85px 20px; /* Отступ снизу под меню */
+        }
+
+        /* Навигация внизу экрана */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 410px;
+            height: 70px;
+            background-color: #fff;
+            border-top: 3px solid #4a3e3d;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            color: #7d706e;
+            font-weight: bold;
+            font-size: 12px;
+            transition: all 0.2s ease;
+            flex: 1;
+            padding: 5px 0;
+        }
+
+        .nav-item .icon {
+            font-size: 22px;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: #2bd14e; /* Яркий зеленый активный цвет */
+        }
+
+        .nav-item.active .icon {
+            transform: scale(1.15);
+        }
+
+        /* Стили для разных экранов */
+        .app-screen {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .app-screen.active {
+            display: flex;
         }
 
         /* Стильный заголовок */
@@ -51,32 +107,163 @@
             position: relative;
         }
 
+        /* ЭКРАН ДОМОЙ (HOME) */
+        .welcome-card {
+            background-color: #fff;
+            border: 3px solid #4a3e3d;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 6px 0 #4a3e3d;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .welcome-card h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .name-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .name-input {
+            padding: 10px 15px;
+            border: 2px solid #4a3e3d;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            outline: none;
+            width: 60%;
+        }
+
+        .name-submit-btn {
+            background-color: #baffc9;
+            border: 2px solid #4a3e3d;
+            border-radius: 12px;
+            padding: 10px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #4a3e3d;
+        }
+
+        .name-submit-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #4a3e3d;
+        }
+
+        /* Карточка дня */
+        .daily-card {
+            background-color: #ffffba;
+            border: 3px solid #4a3e3d;
+            border-radius: 24px;
+            padding: 25px 20px;
+            box-shadow: 0 6px 0 #4a3e3d;
+            text-align: center;
+            position: relative;
+        }
+
+        .daily-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffdfba;
+            border: 2px solid #4a3e3d;
+            border-radius: 10px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .daily-german {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .daily-russian {
+            font-size: 16px;
+            color: #5a4e4d;
+            border-top: 2px dashed #4a3e3d;
+            padding-top: 10px;
+            display: inline-block;
+            width: 80%;
+        }
+
+        /* ЭКРАН ПРОФИЛЯ (PROFILE) */
+        .profile-card {
+            background-color: #fff;
+            border: 3px solid #4a3e3d;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 6px 0 #4a3e3d;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        .stat-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            background-color: #fcf8f2;
+            border: 2px solid #4a3e3d;
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 22px;
+            font-weight: 900;
+            color: #2bd14e;
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: #7d706e;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
         /* Список уровней-полосочек */
         .levels-list {
             display: flex;
             flex-direction: column;
             gap: 15px;
-            overflow-y: auto;
-            flex-grow: 1;
             padding-bottom: 20px;
         }
 
         /* Сама игровая "полосочка" уровня */
         .level-card {
             background-color: #fff;
-            border: 3px solid #4a3e3d; /* Толстая мультяшная обводка */
-            border-radius: 20px; /* Круглые углы */
+            border: 3px solid #4a3e3d;
+            border-radius: 20px;
             padding: 15px 20px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             position: relative;
             cursor: pointer;
-            box-shadow: 0 6px 0 #4a3e3d; /* Объемная тень */
+            box-shadow: 0 6px 0 #4a3e3d;
             transition: all 0.1s ease;
         }
 
-        /* Эффект нажатия */
         .level-card:active {
             transform: translateY(4px);
             box-shadow: 0 2px 0 #4a3e3d;
@@ -96,7 +283,6 @@
             font-weight: 500;
         }
 
-        /* Контейнер для шкалы прогресса */
         .progress-container {
             display: flex;
             align-items: center;
@@ -105,7 +291,6 @@
             gap: 10px;
         }
 
-        /* Серая дорожка прогресс-бара */
         .progress-bar-bg {
             flex-grow: 1;
             height: 12px;
@@ -116,10 +301,9 @@
             position: relative;
         }
 
-        /* Яркая заливка прогресса */
         .progress-bar-fill {
             height: 100%;
-            background-color: #2bd14e; /* Зеленый цвет */
+            background-color: #2bd14e;
             border-right: 2px solid #4a3e3d;
             width: 0%;
             transition: width 0.3s ease;
@@ -141,13 +325,13 @@
 
         /* ЭКРАН КАРТОЧКИ */
         .card-screen {
-            display: none; /* Прячем до клика */
+            display: none;
             flex-direction: column;
             justify-content: space-between;
             height: 100%;
+            width: 100%;
         }
 
-        /* Кнопка "Назад" */
         .back-btn {
             align-self: flex-start;
             background-color: #fff;
@@ -169,7 +353,6 @@
             box-shadow: 0 1px 0 #4a3e3d;
         }
 
-        /* Сама карточка со словом */
         .card {
             background-color: #fff;
             border: 4px solid #4a3e3d;
@@ -221,7 +404,6 @@
             width: 80%;
         }
 
-        /* Кнопки управления */
         .controls {
             display: flex;
             width: 100%;
@@ -262,8 +444,31 @@
 <body>
     <div class="phone-container">
         
-        <!-- ГЛАВНЫЙ ЭКРАН: ВЫБОР УРОВНЕЙ -->
-        <div id="menu-screen">
+        <!-- ЭКРАН 1: ДОМОЙ (HOME) -->
+        <div id="screen-home" class="app-screen active">
+            <div class="header">
+                <h1>🏠 Главная</h1>
+            </div>
+            
+            <div class="welcome-card">
+                <h2 id="welcome-text">Привет! 👋</h2>
+                <p style="font-size: 14px; color: #7d706e;">Добро пожаловать в Немецкий Блокнот. Как тебя зовут?</p>
+                <div class="name-input-group">
+                    <input type="text" id="user-name-input" class="name-input" placeholder="Твое имя...">
+                    <button class="name-submit-btn" onclick="saveName()">ОК</button>
+                </div>
+            </div>
+
+            <!-- Блок "Фраза дня" -->
+            <div class="daily-card">
+                <div class="daily-badge">Фраза дня 🌟</div>
+                <div class="daily-german" id="daily-german-text">Загрузка...</div>
+                <div class="daily-russian" id="daily-russian-text">Загрузка перевода...</div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН 2: ВЫБОР УРОВНЕЙ (LEVELS) -->
+        <div id="screen-levels" class="app-screen">
             <div class="header">
                 <h1>⭐ Level Select ⭐</h1>
             </div>
@@ -287,9 +492,9 @@
                     <div class="level-card-subtitle">Заказ, счет, официант, платить, вкусно...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-restaurant" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-restaurant" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
@@ -299,9 +504,9 @@
                     <div class="level-card-subtitle">Направо, вокзал, автобус, спросить дорогу...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-city" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-city" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
@@ -323,9 +528,9 @@
                     <div class="level-card-subtitle">Боль, рецепт, аптека, объяснить, что болит...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-health" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-health" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
@@ -335,9 +540,9 @@
                     <div class="level-card-subtitle">Ключ, комната, залог, арендовать, въезжать...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-hotel" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-hotel" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
@@ -347,9 +552,9 @@
                     <div class="level-card-subtitle">Опыт, коллега, фирма, базовое собеседование...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-job" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-job" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
@@ -359,9 +564,9 @@
                     <div class="level-card-subtitle">Книга, спорт, друзья, разговор о жизни...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-hobby" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-hobby" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
@@ -371,9 +576,9 @@
                     <div class="level-card-subtitle">Подарок, вино, приглашение, сказать тост...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-guests" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-guests" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
@@ -383,17 +588,40 @@
                     <div class="level-card-subtitle">Потерять, украли, полиция, попросить о помощи...</div>
                     <div class="progress-container">
                         <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-emergency" style="width: 0%;"></div>
+                            <div class="progress-bar-fill" id="progress-emergency" style="width: 100%;"></div>
                         </div>
-                        <div class="progress-text">0 / 25 слов</div>
+                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ЭКРАН С АКТИВНЫМИ КАРТОЧКАМИ (изначально скрыт) -->
+        <!-- ЭКРАН 3: ПРОФИЛЬ (PROFILE) -->
+        <div id="screen-profile" class="app-screen">
+            <div class="header">
+                <h1>👤 Профиль</h1>
+            </div>
+            <div class="profile-card">
+                <div class="avatar">🦊</div>
+                <h2 id="profile-name">Пользователь</h2>
+                <p style="font-size: 13px; color: #7d706e; margin-top: 5px;">Твой уровень: Немецкий исследователь 🇩🇪</p>
+                
+                <div class="stat-box">
+                    <div class="stat-item">
+                        <div class="stat-val">10 / 10</div>
+                        <div class="stat-lbl">Тем разблокировано</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-val">250</div>
+                        <div class="stat-lbl">Всего фраз в базе</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН КАРТОЧКИ (Активен только внутри тем) -->
         <div id="card-screen" class="card-screen">
-            <button class="back-btn" onclick="backToMenu()">⬅️ Назад к меню</button>
+            <button class="back-btn" onclick="backToMenu()">⬅️ Назад к списку</button>
             
             <div class="card" id="main-card" onclick="flipCard()">
                 <div class="counter" id="card-counter">1 / 25</div>
@@ -407,10 +635,26 @@
             </div>
         </div>
 
+        <!-- НИЖНЯЯ НАВИГАЦИОННАЯ ПАНЕЛЬ -->
+        <nav class="bottom-nav" id="app-nav-bar">
+            <div class="nav-item active" onclick="switchTab('home')">
+                <span class="icon">🏠</span>
+                <span>Домой</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('levels')">
+                <span class="icon">📚</span>
+                <span>Блокнот</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('profile')">
+                <span class="icon">👤</span>
+                <span>Профиль</span>
+            </div>
+        </nav>
+
     </div>
 
     <script>
-        // БАЗА ДАННЫХ (Ваши 50 слов + заглушки для будущих тем)
+        // БАЗА ДАННЫХ
         const wordDatabase = {
             weather: [
                 { de: "Es schüttet wie aus Eimern, wir bleiben lieber drin.", ru: "Льет как из ведра, лучше останемся дома.", gender: "other" },
@@ -453,7 +697,7 @@
                 { de: "Brauchst du den Kassenbon?", ru: "Вам нужен чек?", gender: "masc" },
                 { de: "Lass mal noch ein paar Snacks für heute Abend holen.", ru: "Давай возьмём ещё немного вкусняшек на вечер.", gender: "other" },
                 { de: "Der Joghurt ist leider schon abgelaufen.", ru: "Йогурт, к сожалению, уже испортился (истёк срок годности).", gender: "masc" },
-                { de: "Ich muss erst mal das ganze Pfand wegbringen.", ru: "Мне нужно сначала сдать всю эту тару.", gender: "neu" },
+                { de: "Ich must erst mal das ganze Pfand wegbringen.", ru: "Мне нужно сначала сдать всю эту тару.", gender: "neu" },
                 { de: "Die Erdbeeren sehen richtig frisch aus.", ru: "Клубника выглядит прямо очень свежей.", gender: "other" },
                 { de: "Ich schau mich nur kurz um, danke!", ru: "Я просто осмотрюсь, спасибо!", gender: "other" },
                 { de: "Stimmt so!", ru: "Сдачи не нужно!", gender: "other" },
@@ -466,7 +710,6 @@
                 { de: "Das ist voll die Abzocke!", ru: "Это чистой воды грабёж! (очень дорого)", gender: "fem" },
                 { de: "Kann ich das hier wieder zurücklegen?", ru: "Я могу положить это обратно (на полку)?", gender: "other" }
             ],
-            // Временные заглушки для остальных тем, которые заполнит ИИ
             restaurant: [
                 { de: "Hi, ich hätte gerne einen Cappuccino mit Hafermilch.", ru: "Привет, мне, пожалуйста, капучино на овсяном молоке.", gender: "masc" },
                 { de: "Geht das auch to-go?", ru: "А можно это с собой?", gender: "other" },
@@ -506,7 +749,7 @@
                 { de: "Hat das Museum heute eigentlich offen?", ru: "Музей вообще сегодня открыт?", gender: "neu" },
                 { de: "Ist das das richtige Gleis für die S-Bahn?", ru: "Это тот самый путь для электрички?", gender: "neu" },
                 { de: "Gibt's hier irgendwo Free-Wifi?", ru: "Тут есть где-нибудь бесплатный вайфай?", gender: "neu" },
-                { de: "Hi, weißt du, wo die Apotheke ist?", ru: "Привет, не знаешь, где тут аптека?", gender: "fem" },
+                { de: "Hi, weißt du, wo die Apotheке ist?", ru: "Привет, не знаешь, где тут аптека?", gender: "fem" },
                 { de: "Das sind nur fünf Minuten zu Fuß.", ru: "Это всего пять минут пешком.", gender: "other" },
                 { de: "Kannst du mir das kurz auf der Karte zeigen?", ru: "Можешь показать мне это быстренько на карте?", gender: "fem" },
                 { de: "Wo ist hier der Ausgang?", ru: "Где здесь выход?", gender: "masc" },
@@ -688,43 +931,143 @@
         let currentWords = [];
         let currentIndex = 0;
         let showingGerman = true;
-        let savedScrollPosition = 0; // Переменная для запоминания прокрутки!
+        let savedScrollPosition = 0;
 
         // Цветовая схема родов
         const colors = {
-            masc: '#bae1ff',   // Голубой (мужской)
-            fem: '#ffb3ba',    // Розовый (женский)
-            neu: '#baffc9',    // Зеленый (средний)
-            other: '#ffdfba'   // Желтый (общий)
+            masc: '#bae1ff',
+            fem: '#ffb3ba',
+            neu: '#baffc9',
+            other: '#ffdfba'
+        };
+
+        // Запуск при загрузке страницы
+        window.onload = function() {
+            loadUserData();
+            generateDailyPhrase();
+        };
+
+        // --- ЛОГИКА ТАБОВ (ВКЛАДОК) ---
+        function switchTab(tabId) {
+            // Прячем экран карточек, если он был активен
+            document.getElementById('card-screen').style.display = 'none';
+            document.getElementById('app-nav-bar').style.display = 'flex';
+
+            // Прячем все экраны
+            const screens = document.querySelectorAll('.app-screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+
+            // Убираем подсветку со всех кнопок меню
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            // Показываем нужный экран
+            const targetScreen = document.getElementById(`screen-${tabId}`);
+            if (targetScreen) targetScreen.classList.add('active');
+
+            // Подсвечиваем нужную кнопку
+            const activeIndex = tabId === 'home' ? 0 : tabId === 'levels' ? 1 : 2;
+            navItems[activeIndex].classList.add('active');
+        }
+
+        // --- СОХРАНЕНИЕ ИМЕНИ ---
+        function saveName() {
+            const input = document.getElementById('user-name-input');
+            const name = input.value.trim();
+            if (name) {
+                localStorage.setItem('german_cards_username', name);
+                updateWelcomeText(name);
+            }
+        }
+
+        function loadUserData() {
+            const savedName = localStorage.getItem('german_cards_username');
+            if (savedName) {
+                updateWelcomeText(savedName);
+                document.getElementById('user-name-input').value = savedName;
+            }
+        }
+
+        function updateWelcomeText(name) {
+            document.getElementById('welcome-text').innerText = `Привет, ${name}! 👋`;
+            document.getElementById('profile-name').innerText = name;
+        }
+
+        // --- УМНАЯ "ФРАЗА ДНЯ" ---
+        function generateDailyPhrase() {
+            const today = new Date().toDateString(); // Получаем текущую дату (без времени)
+            const savedDate = localStorage.getItem('daily_phrase_date');
+            
+            let dailyPhrase;
+
+            // Если дата изменилась или фразы дня еще нет в памяти
+            if (savedDate !== today) {
+                // Собираем абсолютно все фразы из всех тем в один массив
+                const allPhrases = [];
+                Object.keys(wordDatabase).forEach(category => {
+                    allPhrases.push(...wordDatabase[category]);
+                });
+
+                // Выбираем случайную фразу
+                const randomIndex = Math.floor(Math.random() * allPhrases.length);
+                dailyPhrase = allPhrases[randomIndex];
+
+                // Сохраняем выбранную фразу и сегодняшнюю дату в память телефона
+                localStorage.setItem('daily_phrase_date', today);
+                localStorage.setItem('daily_phrase_data', JSON.stringify(dailyPhrase));
+            } else {
+                // Если день еще не прошел — берем вчерашнюю фразу дня из памяти
+                dailyPhrase = JSON.parse(localStorage.getItem('daily_phrase_data'));
+            }
+
+            // Выводим фразу дня на экран
+            if (dailyPhrase) {
+                document.getElementById('daily-german-text').innerText = dailyPhrase.de;
+                document.getElementById('daily-russian-text').innerText = dailyPhrase.ru;
+            }
+        }
+
+        // --- ЛОГИКА ОБУЧАЮЩИХ КАРТОЧЕК ---
+        let currentLevelKey = ""; // Запоминаем, какая тема сейчас открыта
+
+        // Запуск при загрузке страницы — теперь также загружает сохранённый прогресс пользователя
+        window.onload = function() {
+            loadUserData();
+            generateDailyPhrase();
+            loadAllProgress(); // Загружаем прогресс по всем темам при старте!
         };
 
         function startLevel(levelKey) {
-            // 1. Запоминаем, насколько глубоко прокручена страница в этот момент
             savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
-            // 2. Загружаем нужные карточки
+            currentLevelKey = levelKey; // Запоминаем текущую тему
             currentWords = wordDatabase[levelKey] || [];
-            currentIndex = 0;
+            
+            // Загружаем сохранённый индекс карточки, на которой остановились (или 0)
+            const savedIndex = localStorage.getItem(`progress_index_${levelKey}`);
+            currentIndex = savedIndex ? parseInt(savedIndex) : 0;
             showingGerman = true;
 
-            // 3. Переключаем экраны
-            document.getElementById('menu-screen').style.display = 'none';
+            // Скрываем навигацию и списки
+            document.getElementById('screen-levels').classList.remove('active');
+            document.getElementById('app-nav-bar').style.display = 'none';
             document.getElementById('card-screen').style.display = 'flex';
 
-            // 4. Показываем первую карточку
             updateCard();
         }
 
         function backToMenu() {
-            // 1. Прячем карточки и показываем меню
-            document.getElementById('menu-screen').style.display = 'block';
             document.getElementById('card-screen').style.display = 'none';
+            document.getElementById('screen-levels').classList.add('active');
+            document.getElementById('app-nav-bar').style.display = 'flex';
 
-            // 2. Возвращаем пользователя ровно на ту высоту, где он кликал!
+            // Обновляем визуальные полосочки прогресса в меню при возврате
+            loadAllProgress();
+
             setTimeout(() => {
                 window.scrollTo({
                     top: savedScrollPosition,
-                    behavior: 'instant' // Мгновенный возврат без лишних анимаций
+                    behavior: 'instant'
                 });
             }, 50);
         }
@@ -735,14 +1078,79 @@
             const word = currentWords[currentIndex];
             const cardElement = document.getElementById('main-card');
             
-            // Настраиваем счетчик карточек
             document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${currentWords.length}`;
             
-            // Задаем цвет фона в зависимости от рода слова
             const genderColor = colors[word.gender] || colors.other;
             cardElement.style.backgroundColor = genderColor;
 
-            // Сбрасываем показ на немецкий текст
+            showingGerman = true;
+            document.getElementById('german-text').innerText = word.de;
+            document.getElementById('russian-text').style.display = 'none';
+
+            // Сохраняем текущий прогресс изучения в память телефона
+            saveProgress(currentLevelKey, currentIndex + 1);
+        }
+
+        // Функция для сохранения прогресса в локальную память устройства
+        function saveProgress(levelKey, viewCount) {
+            const maxViewed = localStorage.getItem(`progress_max_${levelKey}`) || 0;
+            // Запоминаем только максимальный прогресс (чтобы он не уменьшался, если листать назад)
+            if (viewCount > maxViewed) {
+                localStorage.setItem(`progress_max_${levelKey}`, viewCount);
+            }
+            // Запоминаем, на какой конкретно карточке сейчас остановился пользователь
+            localStorage.setItem(`progress_index_${levelKey}`, currentIndex);
+        }
+
+        // Функция для загрузки и отображения прогресса на главном экране по всем темам
+        function loadAllProgress() {
+            const categories = Object.keys(wordDatabase);
+            
+            categories.forEach(category => {
+                const maxViewed = parseInt(localStorage.getItem(`progress_max_${category}`)) || 0;
+                const totalWords = wordDatabase[category].length;
+                
+                // Рассчитываем процент прогресса
+                const percentage = totalWords > 0 ? Math.round((maxViewed / totalWords) * 100) : 0;
+                
+                // Находим элементы на странице по ID
+                const fillElement = document.getElementById(`progress-${category}`);
+                const textElement = fillElement ? fillElement.closest('.progress-container').querySelector('.progress-text') : null;
+                
+                // Обновляем ширину зеленой полоски и текстовый показатель
+                if (fillElement) {
+                    fillElement.style.width = `${percentage}%`;
+                }
+                if (textElement) {
+                    textElement.innerText = `${maxViewed} / ${totalWords} слов`;
+                }
+            });
+        }
+
+        function backToMenu() {
+            document.getElementById('card-screen').style.display = 'none';
+            document.getElementById('screen-levels').classList.add('active');
+            document.getElementById('app-nav-bar').style.display = 'flex';
+
+            setTimeout(() => {
+                window.scrollTo({
+                    top: savedScrollPosition,
+                    behavior: 'instant'
+                });
+            }, 50);
+        }
+
+        function updateCard() {
+            if (currentWords.length === 0) return;
+
+            const word = currentWords[currentIndex];
+            const cardElement = document.getElementById('main-card');
+            
+            document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${currentWords.length}`;
+            
+            const genderColor = colors[word.gender] || colors.other;
+            cardElement.style.backgroundColor = genderColor;
+
             showingGerman = true;
             document.getElementById('german-text').innerText = word.de;
             document.getElementById('russian-text').style.display = 'none';
@@ -753,19 +1161,17 @@
             const russianTextElement = document.getElementById('russian-text');
 
             if (showingGerman) {
-                // Показываем перевод
                 russianTextElement.innerText = word.ru;
                 russianTextElement.style.display = 'block';
                 showingGerman = false;
             } else {
-                // Прячем перевод обратно
                 russianTextElement.style.display = 'none';
                 showingGerman = true;
             }
         }
 
         function nextCard(event) {
-            event.stopPropagation(); // Чтобы карточка не переворачивалась при клике на кнопку
+            event.stopPropagation();
             if (currentIndex < currentWords.length - 1) {
                 currentIndex++;
                 updateCard();
@@ -773,7 +1179,7 @@
         }
 
         function prevCard(event) {
-            event.stopPropagation(); // Чтобы карточка не переворачивалась при клике на кнопку
+            event.stopPropagation();
             if (currentIndex > 0) {
                 currentIndex--;
                 updateCard();
