@@ -1,1 +1,6 @@
+# Кэш Python
+__pycache__/
+*.pyc
 
+# Системные файлы Apple (если заходите с Mac)
+.DS_Store
