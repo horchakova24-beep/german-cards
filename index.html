@@ -451,12 +451,9 @@
             </div>
             
             <div class="welcome-card">
-                <h2 id="welcome-text">Привет! 👋</h2>
-                <p style="font-size: 14px; color: #7d706e;">Добро пожаловать в Немецкий Блокнот. Как тебя зовут?</p>
-                <div class="name-input-group">
-                    <input type="text" id="user-name-input" class="name-input" placeholder="Твое имя...">
-                    <button class="name-submit-btn" onclick="saveName()">ОК</button>
-                </div>
+                <h2 id="welcome-text">Привет, Пользователь! 👋</h2>
+                <p style="font-size: 14px; color: #7d706e;">Твой личный помощник в изучении немецкого языка. Карточки обновлены и готовы к работе!</p>
+            </div>
             </div>
 
             <!-- Блок "Фраза дня" -->
@@ -948,37 +945,55 @@
         };
 
         // --- ЛОГИКА ТАБОВ (ВКЛАДОК) ---
-        function switchTab(tabId) {
-            // Прячем экран карточек, если он был активен
-            document.getElementById('card-screen').style.display = 'none';
-            document.getElementById('app-nav-bar').style.display = 'flex';
-
-            // Прячем все экраны
-            const screens = document.querySelectorAll('.app-screen');
-            screens.forEach(screen => screen.classList.remove('active'));
-
-            // Убираем подсветку со всех кнопок меню
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => item.classList.remove('active'));
-
-            // Показываем нужный экран
-            const targetScreen = document.getElementById(`screen-${tabId}`);
-            if (targetScreen) targetScreen.classList.add('active');
-
-            // Подсвечиваем нужную кнопку
-            const activeIndex = tabId === 'home' ? 0 : tabId === 'levels' ? 1 : 2;
-            navItems[activeIndex].classList.add('active');
+        function loadUserData() {
+            const savedName = localStorage.getItem('german_cards_username') || "Пользователь";
+            
+            // Приветствие на главной (без полей ввода!)
+            document.getElementById('welcome-text').innerText = `Привет, ${savedName}! 👋`;
+            
+            // Имя в профиле
+            document.getElementById('profile-name').innerText = savedName;
+            
+            // Считаем РЕАЛЬНУЮ статистику для профиля
+            updateProfileStats();
         }
 
-        // --- СОХРАНЕНИЕ ИМЕНИ ---
-        function saveName() {
-            const input = document.getElementById('user-name-input');
-            const name = input.value.trim();
-            if (name) {
-                localStorage.setItem('german_cards_username', name);
-                updateWelcomeText(name);
+        // Функция, которая честно считает, сколько тем начато и сколько слов просмотрено
+        function updateProfileStats() {
+            const categories = Object.keys(wordDatabase);
+            let startedCategoriesCount = 0;
+            let totalViewedWords = 0;
+            let totalWordsInApp = 0;
+
+            categories.forEach(category => {
+                const maxViewed = parseInt(localStorage.getItem(`progress_max_${category}`)) || 0;
+                const totalWords = wordDatabase[category].length;
+
+                totalWordsInApp += totalWords;
+                totalViewedWords += maxViewed;
+
+                if (maxViewed > 0) {
+                    startedCategoriesCount++; // Тема считается начатой, если просмотрено > 0 слов
+                }
+            });
+
+            // Находим элементы в профиле и записываем туда честные цифры
+            const statBoxes = document.getElementById('screen-profile').querySelectorAll('.stat-val');
+            if (statBoxes.length >= 2) {
+                statBoxes[0].innerText = `${startedCategoriesCount} / ${categories.length}`; // Реально начатые темы
+                statBoxes[1].innerText = `${totalViewedWords} / ${totalWordsInApp}`;       // Реально просмотренные слова
             }
         }
+
+        // Позволим менять имя прямо в профиле, если кликнуть на него!
+        document.getElementById('profile-name').addEventListener('click', function() {
+            const currentName = this.innerText;
+            const newName = prompt("Как тебя зовут?", currentName);
+            if (newName && newName.trim() !== "") {
+                localStorage.setItem('german_cards_username', newName.trim());
+                loadUserData();
+            }
+        });
 
         function loadUserData() {
             const savedName = localStorage.getItem('german_cards_username');
