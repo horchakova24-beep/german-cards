@@ -64,8 +64,7 @@ def generate_words():
             "parts": [{"text": prompt}]
         }],
         "generationConfig": {
-            "responseMimeType": "application/json",
-            "maxOutputTokens": 8192
+            "responseMimeType": "application/json"
         }
     }
 
