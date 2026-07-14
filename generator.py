@@ -31,7 +31,7 @@ def generate_words():
 
     print(f"Запуск генерации для темы: {topic_name_ru}...")
 
-    # Инструкция для ИИ
+    # Инструкция для ИИ: требуем живой, современный язык 2026 года и компактный JSON
     prompt = f"""
     Ты — молодой, дружелюбный и современный житель Германии в 2026 году. 
     Ты помогаешь составить учебные карточки для изучения живого, разговорного немецкого языка (Alltagssprache).
@@ -39,32 +39,37 @@ def generate_words():
     Твоя задача — сгенерировать ровно 25 коротких, практичных фраз на тему: "{topic_name_ru}".
     
     СТРОГИЕ ПРАВИЛА:
-    1. Используй исключительно естественную разговорную речь (Umgangssprache), которую используют носители прямо сейчас на улицах, в кафе или магазинах в 2026 году.
-    2. Избегай устаревших, чисто книжных, бумажных или слишком официальных канцелярских оборотов (например, не пиши "Kaufmannsladen", пиши "Supermarkt"; не пиши "Mobiltelefon", пиши "Handy").
+    1. Используй исключительно естественную разговорную речь (Umgangssprache), которую используют носители прямо сейчас на улицах Германии в 2026 году.
+    2. Избегай устаревших, чисто книжных, бумажных или официальных слов (например, не пиши "Kaufmannsladen", пиши "Supermarkt"; не пиши "Mobiltelefon", пиши "Handy"). Никакого старого стиля!
     3. Фразы должны быть полезными в реальной жизни.
-    4. Для каждой фразы определи род главного немецкого существительного в предложении:
-       - 'masc' если слово мужского рода (der)
-       - 'fem' если женского (die)
-       - 'neu' если среднего (das)
-       - 'other' если существительного нет, оно во множественном числе или это общее выражение.
+    4. Для каждой фразы определи род главного немецкого существительного:
+       - 'masc' если мужской (der)
+       - 'fem' если женский (die)
+       - 'neu' если средний (das)
+       - 'other' если существительного нет, это множественное число или общее выражение.
+    5. Пиши ответ максимально компактно, без лишних пробелов, не трать токены, чтобы JSON не обрезался в конце, и ОБЯЗАТЕЛЬНО закрой квадратную скобку ']' в конце!
     
-    Ответ выдай строго в формате JSON списка без лишнего текста, объяснений и markdown-разметки (без ```json). 
-    Пример формата:
-    [
-      {{"de": "Kann ich mit Karte zahlen?", "ru": "Могу я оплатить картой?", "gender": "fem"}},
-      {{"de": "Der Kaffee ist echt lecker!", "ru": "Кофе действительно очень вкусный!", "gender": "masc"}}
-    ]
+    Ответ выдай строго в формате JSON списка без объяснений и без ```json. 
+    Пример:
+    [{{"de": "Kann ich mit Karte zahlen?", "ru": "Могу я оплатить картой?", "gender": "fem"}},{{"de": "Der Kaffee ist echt lecker!", "ru": "Кофе очень вкусный!", "gender": "masc"}}]
     """
 
-   # Изменили v1beta на v1 для совместимости с моделью 2.5
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={api_key}"
+    # Чистый рабочий URL
+    url = f"[https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=){api_key}"
+
     headers = {"Content-Type": "application/json"}
+    
+    # Настройки: отключаем размышления и даем большой лимит на вывод
     data = {
         "contents": [{
             "parts": [{"text": prompt}]
         }],
         "generationConfig": {
-            "responseMimeType": "application/json"
+            "responseMimeType": "application/json",
+            "maxOutputTokens": 8192,
+            "thinkingConfig": {
+                "thinkingBudget": 0
+            }
         }
     }
 
@@ -74,24 +79,30 @@ def generate_words():
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode("utf-8"))
             ai_text = result['candidates'][0]['content']['parts'][0]['text']
-            try:
-                new_words = json.loads(ai_text.strip())
-            except json.JSONDecodeError as je:
-                print(f"Ошибка: ИИ вернул невалидный JSON: {je}")
-                print("--- Сырой ответ ИИ (для отладки) ---")
-                print(ai_text)
-                sys.exit(1)
+            
+            # Чистим ответ на всякий случай
+            cleaned_text = ai_text.replace("```json", "").replace("```", "").strip()
+            
+            # Проверяем, закрыт ли JSON массив
+            if not cleaned_text.endswith("]"):
+                cleaned_text += "]"
+                
+            new_words = json.loads(cleaned_text)
             print(f"Успешно получено {len(new_words)} слов от ИИ!")
     except Exception as e:
         print(f"Ошибка при запросе к ИИ: {e}")
+        print(f"--- Сырой ответ ИИ (для отладки) ---")
+        try:
+            print(ai_text)
+        except:
+            pass
         sys.exit(1)
 
-    # Встраиваем слова в наш index.html
+    # Встраиваем слова в index.html
     try:
         with open("index.html", "r", encoding="utf-8") as f:
             html_content = f.read()
 
-        # Заменяем всё внутри квадратных скобок [...] для выбранной темы
         pattern = rf'({topic}:\s*\[)(.*?)(\])'
 
         formatted_words = ",\n".join([f'                {{ de: "{w["de"]}", ru: "{w["ru"]}", gender: "{w["gender"]}" }}' for w in new_words])
