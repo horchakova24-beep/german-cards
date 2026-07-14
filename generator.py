@@ -92,11 +92,15 @@ def generate_words():
         formatted_words = ",\n".join([f'                {{ de: "{w["de"]}", ru: "{w["ru"]}", gender: "{w["gender"]}" }}' for w in new_words])
         replacement = f"\\1\n{formatted_words}\n            \\3"
 
-        new_html_content = re.sub(pattern, replacement, html_content, count=1)
+        new_html_content, n_subs = re.subn(pattern, replacement, html_content, count=1, flags=re.DOTALL)
+
+        if n_subs == 0:
+            print(f"⚠️ Внимание: тема '{topic}' не найдена в index.html или формат массива не совпал с шаблоном!")
+            sys.exit(1)
 
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(new_html_content)
-            
+
         print("Файл index.html успешно обновлен новыми словами!")
 
     except Exception as e:
