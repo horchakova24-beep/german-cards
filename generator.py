@@ -54,11 +54,11 @@ def generate_words():
     [{{"de": "Kann ich mit Karte zahlen?", "ru": "Могу я оплатить картой?", "gender": "fem"}},{{"de": "Der Kaffee ist echt lecker!", "ru": "Кофе очень вкусный!", "gender": "masc"}}]
     """
 
-    # Чистый рабочий URL
-    url = f"[https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=){api_key}"
+    # Чистый рабочий URL (без markdown-скобок!)
+    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=" + api_key
 
     headers = {"Content-Type": "application/json"}
-    
+
     # Настройки: отключаем размышления и даем большой лимит на вывод
     data = {
         "contents": [{
@@ -79,14 +79,14 @@ def generate_words():
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode("utf-8"))
             ai_text = result['candidates'][0]['content']['parts'][0]['text']
-            
+
             # Чистим ответ на всякий случай
             cleaned_text = ai_text.replace("```json", "").replace("```", "").strip()
-            
+
             # Проверяем, закрыт ли JSON массив
             if not cleaned_text.endswith("]"):
                 cleaned_text += "]"
-                
+
             new_words = json.loads(cleaned_text)
             print(f"Успешно получено {len(new_words)} слов от ИИ!")
     except Exception as e:
