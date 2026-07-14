@@ -2,990 +2,772 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Немецкий Блокнот (По родам)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Немецкий Блокнот</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-color: #fcf8f2;
+            --card-bg: #ffffff;
+            --text-color: #4a3e3d;
+            --accent-color: #d4a373;
+            --accent-light: #faedcd;
+            --border-color: #e9dbce;
+            
+            --masc-color: #a8dadc;
+            --fem-color: #ffb703;
+            --neu-color: #ccd5ae;
+            --other-color: #e8e8e8;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: #fcf8f2;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            color: #4a3e3d;
-        }
-
-        .phone-container {
-            width: 100%;
-            max-width: 410px;
-            min-height: 100vh;
-            background-color: #fcf8f2;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.4;
             display: flex;
             flex-direction: column;
-            position: relative;
-            padding: 20px 20px 85px 20px; /* Отступ снизу под меню */
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* Навигация внизу экрана */
+        /* Шапка */
+        header {
+            background-color: var(--card-bg);
+            padding: 15px 20px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Контентная зона */
+        main {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Карточка приветствия */
+        .welcome-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 0 var(--border-color);
+        }
+
+        .welcome-card h2 {
+            margin-bottom: 8px;
+            font-size: 22px;
+        }
+
+        /* Список папок (тем) */
+        .folders-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .folder-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 0 var(--border-color);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .folder-card:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 var(--border-color);
+        }
+
+        .folder-icon {
+            font-size: 28px;
+            color: var(--accent-color);
+        }
+
+        .folder-info {
+            flex-grow: 1;
+        }
+
+        .folder-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .folder-progress-bar {
+            height: 6px;
+            background-color: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .folder-progress-fill {
+            height: 100%;
+            background-color: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Экран карточек */
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .card-wrapper {
+            perspective: 1000px;
+            width: 100%;
+            max-width: 340px;
+            height: 220px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+
+        .card-wrapper.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            border: 3px solid var(--border-color);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 0 var(--border-color);
+            background-color: var(--card-bg);
+        }
+
+        .card-back {
+            transform: rotateY(180deg);
+        }
+
+        .card-text {
+            font-size: 18px;
+            font-weight: 700;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .card-translation {
+            font-size: 16px;
+            color: #7d706e;
+            margin-top: 10px;
+        }
+
+        .gender-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Навигация карточек */
+        .controls-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 0 var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-color);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--border-color);
+        }
+
+        .back-btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+        }
+
+        /* Экран Профиля */
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background-color: var(--accent-light);
+            border: 3px solid var(--accent-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+
+        .profile-name-title {
+            font-size: 22px;
+            font-weight: 800;
+            cursor: pointer;
+            border-bottom: 2px dashed var(--accent-color);
+            padding-bottom: 2px;
+        }
+
+        .stats-card {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            width: 100%;
+            padding: 20px;
+            box-shadow: 0 4px 0 var(--border-color);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-val {
+            font-weight: 800;
+            color: var(--accent-color);
+        }
+
+        /* Экран Методики (Заготовка под Этап 2) */
+        .method-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-block {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 4px 0 var(--border-color);
+        }
+
+        .info-block h3 {
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        /* Нижнее меню навигации */
         .bottom-nav {
             position: fixed;
             bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 410px;
+            left: 0;
+            right: 0;
             height: 70px;
-            background-color: #fff;
-            border-top: 3px solid #4a3e3d;
+            background-color: var(--card-bg);
+            border-top: 2px solid var(--border-color);
             display: flex;
             justify-content: space-around;
             align-items: center;
             z-index: 100;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.05);
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            color: #bfaea8;
+            text-decoration: none;
+            font-size: 11px;
+            font-weight: 700;
             cursor: pointer;
-            color: #7d706e;
-            font-weight: bold;
-            font-size: 12px;
-            transition: all 0.2s ease;
-            flex: 1;
-            padding: 5px 0;
-        }
-
-        .nav-item .icon {
-            font-size: 22px;
-            transition: transform 0.2s ease;
+            gap: 4px;
         }
 
         .nav-item.active {
-            color: #2bd14e; /* Яркий зеленый активный цвет */
+            color: var(--accent-color);
         }
 
-        .nav-item.active .icon {
-            transform: scale(1.15);
-        }
-
-        /* Стили для разных экранов */
-        .app-screen {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .app-screen.active {
-            display: flex;
-        }
-
-        /* Стильный заголовок */
-        .header {
-            text-align: center;
-            margin-bottom: 25px;
-            margin-top: 10px;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #4a3e3d;
-            text-shadow: 2px 2px 0px #fff;
-            display: inline-block;
-            position: relative;
-        }
-
-        /* ЭКРАН ДОМОЙ (HOME) */
-        .welcome-card {
-            background-color: #fff;
-            border: 3px solid #4a3e3d;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 6px 0 #4a3e3d;
-            margin-bottom: 25px;
-            text-align: center;
-        }
-
-        .welcome-card h2 {
-            font-size: 22px;
-            margin-bottom: 10px;
-        }
-
-        .name-input-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
-        }
-
-        .name-input {
-            padding: 10px 15px;
-            border: 2px solid #4a3e3d;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            outline: none;
-            width: 60%;
-        }
-
-        .name-submit-btn {
-            background-color: #baffc9;
-            border: 2px solid #4a3e3d;
-            border-radius: 12px;
-            padding: 10px 15px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #4a3e3d;
-        }
-
-        .name-submit-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #4a3e3d;
-        }
-
-        /* Карточка дня */
-        .daily-card {
-            background-color: #ffffba;
-            border: 3px solid #4a3e3d;
-            border-radius: 24px;
-            padding: 25px 20px;
-            box-shadow: 0 6px 0 #4a3e3d;
-            text-align: center;
-            position: relative;
-        }
-
-        .daily-badge {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #ffdfba;
-            border: 2px solid #4a3e3d;
-            border-radius: 10px;
-            padding: 4px 12px;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-
-        .daily-german {
+        .nav-item i {
             font-size: 20px;
-            font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 12px;
-            line-height: 1.4;
         }
 
-        .daily-russian {
-            font-size: 16px;
-            color: #5a4e4d;
-            border-top: 2px dashed #4a3e3d;
-            padding-top: 10px;
-            display: inline-block;
-            width: 80%;
-        }
-
-        /* ЭКРАН ПРОФИЛЯ (PROFILE) */
-        .profile-card {
-            background-color: #fff;
-            border: 3px solid #4a3e3d;
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 0 6px 0 #4a3e3d;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .avatar {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        .stat-box {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-item {
-            background-color: #fcf8f2;
-            border: 2px solid #4a3e3d;
-            border-radius: 16px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .stat-val {
-            font-size: 22px;
-            font-weight: 900;
-            color: #2bd14e;
-        }
-
-        .stat-lbl {
-            font-size: 11px;
-            color: #7d706e;
-            font-weight: bold;
-            margin-top: 4px;
-        }
-
-        /* Список уровней-полосочек */
-        .levels-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding-bottom: 20px;
-        }
-
-        /* Сама игровая "полосочка" уровня */
-        .level-card {
-            background-color: #fff;
-            border: 3px solid #4a3e3d;
-            border-radius: 20px;
-            padding: 15px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            position: relative;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #4a3e3d;
-            transition: all 0.1s ease;
-        }
-
-        .level-card:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #4a3e3d;
-        }
-
-        .level-card-title {
-            font-size: 18px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .level-card-subtitle {
-            font-size: 13px;
-            color: #7d706e;
-            font-weight: 500;
-        }
-
-        .progress-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 5px;
-            gap: 10px;
-        }
-
-        .progress-bar-bg {
-            flex-grow: 1;
-            height: 12px;
-            background-color: #e8e2da;
-            border: 2px solid #4a3e3d;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background-color: #2bd14e;
-            border-right: 2px solid #4a3e3d;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .progress-text {
-            font-size: 11px;
-            font-weight: bold;
-            color: #4a3e3d;
-            white-space: nowrap;
-        }
-
-        /* Цвета для разных уровней */
-        .color-blue { background-color: #bae1ff; }
-        .color-green { background-color: #baffc9; }
-        .color-orange { background-color: #ffdfba; }
-        .color-purple { background-color: #e8d7ff; }
-        .color-yellow { background-color: #ffffba; }
-
-        /* ЭКРАН КАРТОЧКИ */
-        .card-screen {
+        /* Стили для лоадера (загрузки) */
+        .loader {
             display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            width: 100%;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
 
-        .back-btn {
-            align-self: flex-start;
-            background-color: #fff;
-            border: 3px solid #4a3e3d;
-            border-radius: 15px;
-            padding: 8px 16px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #4a3e3d;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.1s ease;
-            margin-bottom: 20px;
-        }
-
-        .back-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #4a3e3d;
-        }
-
-        .card {
-            background-color: #fff;
-            border: 4px solid #4a3e3d;
-            border-radius: 28px;
-            width: 100%;
-            min-height: 320px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 8px 0 #4a3e3d;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .card:active {
-            transform: scale(0.96);
-        }
-
-        .counter {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            font-size: 13px;
-            font-weight: bold;
-            opacity: 0.4;
-            letter-spacing: 1px;
-        }
-
-        .german {
-            font-size: 28px;
-            font-weight: 800;
-            color: #000;
-            margin-bottom: 20px;
-            line-height: 1.35;
-        }
-
-        .russian {
-            font-size: 19px;
-            font-weight: 500;
-            color: #444;
-            line-height: 1.4;
-            border-top: 2px dashed #4a3e3d;
-            padding-top: 15px;
-            width: 80%;
-        }
-
-        .controls {
-            display: flex;
-            width: 100%;
-            justify-content: space-between;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 16px;
-            font-size: 15px;
-            font-weight: bold;
-            border: 3px solid #4a3e3d;
-            border-radius: 16px;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #4a3e3d;
-            transition: all 0.1s ease;
-            text-align: center;
-        }
-
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #4a3e3d;
-        }
-
-        .btn-prev {
-            background-color: #ffb3ba;
-            color: #4a3e3d;
-        }
-
-        .btn-next {
-            background-color: #baffc9;
-            color: #4a3e3d;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="phone-container">
-        
-        <!-- ЭКРАН 1: ДОМОЙ (HOME) -->
-        <div id="screen-home" class="app-screen active">
-            <div class="header">
-                <h1>🏠 Главная</h1>
-            </div>
-            
+
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-book-open"></i>
+            <span>Немецкий Блокнот</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- ЭКРАН 1: ГЛАВНАЯ (Домой) -->
+        <div id="screen-home" class="screen active">
             <div class="welcome-card">
                 <h2 id="welcome-text">Привет, Пользователь! 👋</h2>
                 <p style="font-size: 14px; color: #7d706e;">Твой личный помощник в изучении немецкого языка. Карточки обновлены и готовы к работе!</p>
             </div>
-            </div>
 
-            <!-- Блок "Фраза дня" -->
-            <div class="daily-card">
-                <div class="daily-badge">Фраза дня 🌟</div>
-                <div class="daily-german" id="daily-german-text">Загрузка...</div>
-                <div class="daily-russian" id="daily-russian-text">Загрузка перевода...</div>
-            </div>
-        </div>
-
-        <!-- ЭКРАН 2: ВЫБОР УРОВНЕЙ (LEVELS) -->
-        <div id="screen-levels" class="app-screen">
-            <div class="header">
-                <h1>⭐ Level Select ⭐</h1>
-            </div>
-            
-            <div class="levels-list">
-                <!-- Уровень 1 -->
-                <div class="level-card color-blue" onclick="startLevel('weather')">
-                    <div class="level-card-title">1. Погода и планы 🌤️</div>
-                    <div class="level-card-subtitle">Обсудить прогноз погоды и договориться о встрече</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-weather" style="width: 100%;"></div>
+            <div class="folders-grid">
+                <div class="folder-card" onclick="openCategory('weather')">
+                    <div class="folder-icon"><i class="fa-solid fa-cloud-sun"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Погода и планы</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-weather" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 2 -->
-                <div class="level-card color-orange" onclick="startLevel('restaurant')">
-                    <div class="level-card-title">2. Кафе и ресторан ☕</div>
-                    <div class="level-card-subtitle">Заказ, счет, официант, платить, вкусно...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-restaurant" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('shopping')">
+                    <div class="folder-icon"><i class="fa-solid fa-basket-shopping"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Покупки и супермаркет</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-shopping" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 3 -->
-                <div class="level-card color-purple" onclick="startLevel('city')">
-                    <div class="level-card-title">3. Ориентация в городе 🗺️</div>
-                    <div class="level-card-subtitle">Направо, вокзал, автобус, спросить дорогу...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-city" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('restaurant')">
+                    <div class="folder-icon"><i class="fa-solid fa-utensils"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Кафе и ресторан</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-restaurant" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 4 -->
-                <div class="level-card color-green" onclick="startLevel('shopping')">
-                    <div class="level-card-title">4. Покупки и супермаркет 🛒</div>
-                    <div class="level-card-subtitle">Пакет, сдача, карта, стоить, объяснить на кассе...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-shopping" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('city')">
+                    <div class="folder-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Ориентация в городе</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-city" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 5 -->
-                <div class="level-card color-yellow" onclick="startLevel('health')">
-                    <div class="level-card-title">5. Самочувствие и врач 🏥</div>
-                    <div class="level-card-subtitle">Боль, рецепт, аптека, объяснить, что болит...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-health" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('health')">
+                    <div class="folder-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Самочувствие и врач</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-health" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 6 -->
-                <div class="level-card color-blue" onclick="startLevel('hotel')">
-                    <div class="level-card-title">6. Поиск жилья / Отель 🔑</div>
-                    <div class="level-card-subtitle">Ключ, комната, залог, арендовать, въезжать...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-hotel" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('hotel')">
+                    <div class="folder-icon"><i class="fa-solid fa-hotel"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Поиск жилья / Отель</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-hotel" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 7 -->
-                <div class="level-card color-orange" onclick="startLevel('job')">
-                    <div class="level-card-title">7. Работа и резюме 💼</div>
-                    <div class="level-card-subtitle">Опыт, коллега, фирма, базовое собеседование...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-job" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('job')">
+                    <div class="folder-icon"><i class="fa-solid fa-briefcase"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Работа и резюме</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-job" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 8 -->
-                <div class="level-card color-purple" onclick="startLevel('hobby')">
-                    <div class="level-card-title">8. Хобби и свободное время ⚽</div>
-                    <div class="level-card-subtitle">Книга, спорт, друзья, разговор о жизни...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-hobby" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('hobby')">
+                    <div class="folder-icon"><i class="fa-solid fa-icons"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Хобби и свободное время</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-hobby" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 9 -->
-                <div class="level-card color-green" onclick="startLevel('guests')">
-                    <div class="level-card-title">9. В гостях / Праздники 🍷</div>
-                    <div class="level-card-subtitle">Подарок, вино, приглашение, сказать тост...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-guests" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('guests')">
+                    <div class="folder-icon"><i class="fa-solid fa-wine-glass"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">В гостях / Праздники</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-guests" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
 
-                <!-- Уровень 10 -->
-                <div class="level-card color-yellow" onclick="startLevel('emergency')">
-                    <div class="level-card-title">10. Проблемы и ЧС 🚨</div>
-                    <div class="level-card-subtitle">Потерять, украли, полиция, попросить о помощи...</div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" id="progress-emergency" style="width: 100%;"></div>
+                <div class="folder-card" onclick="openCategory('emergency')">
+                    <div class="folder-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="folder-info">
+                        <div class="folder-title">Проблемы и ЧС</div>
+                        <div class="folder-progress-bar">
+                            <div id="progress-fill-emergency" class="folder-progress-fill"></div>
                         </div>
-                        <div class="progress-text">25 / 25 слов</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- ЭКРАН 3: ПРОФИЛЬ (PROFILE) -->
-        <div id="screen-profile" class="app-screen">
-            <div class="header">
-                <h1>👤 Профиль</h1>
+        <!-- ЭКРАН 2: ПРОСМОТР КАРТОЧЕК -->
+        <div id="screen-cards" class="screen">
+            <div class="back-btn-container">
+                <button class="btn" onclick="goHome()"><i class="fa-solid fa-arrow-left"></i> Назад</button>
             </div>
-            <div class="profile-card">
-                <div class="avatar">🦊</div>
-                <h2 id="profile-name">Пользователь</h2>
-                <p style="font-size: 13px; color: #7d706e; margin-top: 5px;">Твой уровень: Немецкий исследователь 🇩🇪</p>
-                
-                <div class="stat-box">
-                    <div class="stat-item">
-                        <div class="stat-val">10 / 10</div>
-                        <div class="stat-lbl">Тем разблокировано</div>
+
+            <div id="cards-loader" class="loader"></div>
+
+            <div id="cards-area" class="cards-container" style="display: none;">
+                <div class="card-wrapper" onclick="flipCard()">
+                    <div class="card-inner" id="card-inner">
+                        <!-- Лицо -->
+                        <div class="card-face" id="card-face">
+                            <span id="gender-tag" class="gender-badge">OTHER</span>
+                            <div class="card-text" id="phrase-de">Загрузка...</div>
+                        </div>
+                        <!-- Оборот -->
+                        <div class="card-back card-face">
+                            <div class="card-text" id="phrase-ru">Загрузка перевода...</div>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-val">250</div>
-                        <div class="stat-lbl">Всего фраз в базе</div>
-                    </div>
+                </div>
+
+                <div class="controls-group">
+                    <button class="btn" onclick="prevCard()"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="card-counter" style="font-weight: bold; font-size: 16px;">0 / 0</span>
+                    <button class="btn" onclick="nextCard()"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
 
-        <!-- ЭКРАН КАРТОЧКИ (Активен только внутри тем) -->
-        <div id="card-screen" class="card-screen">
-            <button class="back-btn" onclick="backToMenu()">⬅️ Назад к списку</button>
-            
-            <div class="card" id="main-card" onclick="flipCard()">
-                <div class="counter" id="card-counter">1 / 25</div>
-                <div class="german" id="german-text">Загрузка...</div>
-                <div class="russian" id="russian-text">Перевод...</div>
-            </div>
-
-            <div class="controls">
-                <button class="btn btn-prev" onclick="prevCard(event)">Назад</button>
-                <button class="btn btn-next" onclick="nextCard(event)">Вперед</button>
+        <!-- ЭКРАН 3: МЕТОДИКА (Заготовка под Этап 2) -->
+        <div id="screen-method" class="screen">
+            <h2 style="margin-bottom: 15px;">Метод & Тренировка 🧠</h2>
+            <div class="method-container">
+                <div class="info-block">
+                    <h3>📚 Книга Литвинова</h3>
+                    <p style="font-size: 14px; color: #7d706e; margin-bottom: 12px;">Здесь будет размещена выжимка правил по запоминанию немецкой лексики, родов существительных и логике построения фраз.</p>
+                    <button class="btn" style="width: 100%; justify-content: center; background-color: var(--accent-light); border-color: var(--accent-color);">
+                        <i class="fa-solid fa-file-pdf"></i> Открыть книгу PDF
+                    </button>
+                </div>
+                <div class="info-block" style="opacity: 0.6;">
+                    <h3>🎮 Интерактивные тренировки</h3>
+                    <p style="font-size: 14px; color: #7d706e;">Совсем скоро здесь появятся игры «Угадай род существительного (der/die/das)» и «Собери фразу», где за правильные ответы вы будете получать 🪙 монетки!</p>
+                </div>
             </div>
         </div>
 
-        <!-- НИЖНЯЯ НАВИГАЦИОННАЯ ПАНЕЛЬ -->
-        <nav class="bottom-nav" id="app-nav-bar">
-            <div class="nav-item active" onclick="switchTab('home')">
-                <span class="icon">🏠</span>
-                <span>Домой</span>
-            </div>
-            <div class="nav-item" onclick="switchTab('levels')">
-                <span class="icon">📚</span>
-                <span>Блокнот</span>
-            </div>
-            <div class="nav-item" onclick="switchTab('profile')">
-                <span class="icon">👤</span>
-                <span>Профиль</span>
-            </div>
-        </nav>
+        <!-- ЭКРАН 4: ПРОФИЛЬ -->
+        <div id="screen-profile" class="screen">
+            <div class="profile-container">
+                <div class="profile-avatar"><i class="fa-solid fa-user-astronaut"></i></div>
+                <div id="profile-name" class="profile-name-title">Пользователь</div>
+                <p style="font-size: 12px; color: #7d706e; margin-top: -15px;">(нажмите на имя, чтобы изменить)</p>
 
-    </div>
+                <div class="stats-card">
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-folder-open" style="color: var(--accent-color);"></i> Темы в работе</span>
+                        <span class="stat-val" id="profile-stat-categories">0 / 10</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-graduation-cap" style="color: var(--accent-color);"></i> Фразы на изучении</span>
+                        <span class="stat-val" id="profile-stat-words">0 / 250</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label"><i class="fa-solid fa-coins" style="color: #ffb703;"></i> Монеты за тренировки</span>
+                        <span class="stat-val">0 🪙</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Нижнее меню -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <i class="fa-solid fa-house"></i>
+            <span>Домой</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('method', this)">
+            <i class="fa-solid fa-brain"></i>
+            <span>Методика</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('profile', this)">
+            <i class="fa-solid fa-user"></i>
+            <span>Профиль</span>
+        </div>
+    </nav>
 
     <script>
-        // БАЗА ДАННЫХ
-        const wordDatabase = {
-            weather: [
-                { de: "Es schüttet wie aus Eimern, wir bleiben lieber drin.", ru: "Льет как из ведра, лучше останемся дома.", gender: "other" },
-                { de: "Das Wetter ist heute echt mega!", ru: "Погода сегодня просто супер!", gender: "neu" },
-                { de: "Hast du Bock auf einen Spaziergang im Park?", ru: "Есть желание прогуляться в парке?", gender: "masc" },
-                { de: "Mir ist mega kalt, lass uns reingehen.", ru: "Мне капец как холодно, давай зайдем внутрь.", gender: "other" },
-                { de: "Morgen soll die Sonne scheinen, gehen wir grillen?", ru: "Завтра обещали солнце, пойдем на барбекю?", gender: "fem" },
-                { de: "Der Wind pustet heute aber ganz schön ordentlich.", ru: "Ветер сегодня, конечно, дует прилично.", gender: "masc" },
-                { de: "Lass uns das Treffen auf nächste Woche verschieben.", ru: "Давай перенесем встречу на следующую неделю.", gender: "neu" },
-                { de: "Ich schwitze mich hier echt tot!", ru: "Я тут реально умираю от жары!", gender: "other" },
-                { de: "Bei dem Kackwetter bleibe ich auf dem Sofa.", ru: "В такую дерьмовую погоду я остаюсь на диване.", gender: "neu" },
-                { de: "Holen wir uns ein Eis bei der Hitze?", ru: "Возьмем по мороженому в такую жару?", gender: "fem" },
-                { de: "Es nieselt nur ein bisschen, das stört doch nicht.", ru: "Моросит всего чуть-чуть, это же не мешает.", gender: "other" },
-                { de: "Hast du einen Regenschirm am Start?", ru: "У тебя есть с собой зонтик?", gender: "masc" },
-                { de: "Am Wochenende soll es richtig ungemütlich werden.", ru: "На выходных погода обещает быть совсем мерзкой.", gender: "neu" },
-                { de: "Die Luft ist heute so extrem schwül.", ru: "Воздух сегодня такой капец душный.", gender: "fem" },
-                { de: "Wollen wir heute Abend draußen chillen?", ru: "Хочешь сегодня вечером почилить на улице?", gender: "other" },
-                { de: "Ich brauche unbedingt meine Sonnenbrille.", ru: "Мне срочно нужны мои солнцезащитные очки.", gender: "fem" },
-                { de: "Das ist perfektes Wetter für einen Netflix-Abend.", ru: "Это идеальная погода для вечера с Нетфликсом.", gender: "neu" },
-                { de: "Die Sonne brennt heute extrem auf dem Kopf.", ru: "Солнце сегодня просто печет в голову.", gender: "fem" },
-                { de: "Lass uns einen Ausflug machen, solange es trocken ist.", ru: "Давай съездим куда-нибудь, пока сухо.", gender: "masc" },
-                { de: "Bist du eher der Sommer- oder Wintertyp?", ru: "Ты скорее любитель лета или зимы?", gender: "masc" },
-                { de: "Es zieht total, mach bitte das Fenster zu.", ru: "Ужасно сквозит, закрой, пожалуйста, окно.", gender: "neu" },
-                { de: "Morgen soll es endlich abkühlen.", ru: "Завтра наконец-то должно похолодать.", gender: "other" },
-                { de: "Ich habe heute null Bock, rauszugehen.", ru: "У меня сегодня ноль желания выходить на улицу.", gender: "masc" },
-                { de: "Gleich zieht ein fettes Gewitter auf.", ru: "Сейчас начнется мощная гроза.", gender: "neu" },
-                { de: "Die Vorhersage hat mal wieder komplett gelogen.", ru: "Прогноз погоды опять полностью соврал.", gender: "fem" }
-            ],
-            shopping: [
-                { de: "Hast du mal 'nen Euro für den Einkaufswagen?", ru: "У тебя есть евро для тележки?", gender: "masc" },
-                { de: "Die Schlange an der Kasse ist echt mega lang.", ru: "Очередь на кассе реально огромная.", gender: "fem" },
-                { de: "Zahlst du bar oder mit Karte?", ru: "Ты платишь наличными или картой?", gender: "fem" },
-                { de: "Ich brauche noch 'ne Tüte, bitte.", ru: "Мне ещё нужен пакет, пожалуйста.", gender: "fem" },
-                { de: "Wo steht hier die Hafermilch?", ru: "Где здесь стоит овсяное молоко?", gender: "fem" },
-                { de: "Der Pfandautomat ist schon wieder im Eimer.", ru: "Автомат для сдачи бутылок снова сломался.", gender: "masc" },
-                { de: "Hast du die App für die Coupons?", ru: "У тебя есть приложение со скидочными купонами?", gender: "fem" },
-                { de: "Ich scanne das kurz selbst an der SB-Kasse.", ru: "Я быстро сам отсканирую это на кассе самообслуживания.", gender: "fem" },
-                { de: "Ich hab voll den Einkaufszettel vergessen.", ru: "Я напрочь забыл список покупок.", gender: "masc" },
-                { de: "Gibt's auf die Sachen gerade Rabatt?", ru: "На эти вещи сейчас есть скидка?", gender: "masc" },
-                { de: "Brauchst du den Kassenbon?", ru: "Вам нужен чек?", gender: "masc" },
-                { de: "Lass mal noch ein paar Snacks für heute Abend holen.", ru: "Давай возьмём ещё немного вкусняшек на вечер.", gender: "other" },
-                { de: "Der Joghurt ist leider schon abgelaufen.", ru: "Йогурт, к сожалению, уже испортился (истёк срок годности).", gender: "masc" },
-                { de: "Ich muss erst mal das ganze Pfand wegbringen.", ru: "Мне нужно сначала сдать всю эту тару.", gender: "neu" },
-                { de: "Die Erdbeeren sehen richtig frisch aus.", ru: "Клубника выглядит прямо очень свежей.", gender: "other" },
-                { de: "Ich schau mich nur kurz um, danke!", ru: "Я просто осмотрюсь, спасибо!", gender: "other" },
-                { de: "Stimmt so!", ru: "Сдачи не нужно!", gender: "other" },
-                { de: "Das macht dann vierzehn Euro fünfzig, bitte.", ru: "С вас четырнадцать евро пятьдесят, пожалуйста.", gender: "masc" },
-                { de: "Haben wir noch genug Gemüse im Kühlschrank?", ru: "У нас ещё достаточно овощей в холодильнике?", gender: "neu" },
-                { de: "Komm, wir nehmen einen Korb, kein' Einkaufswagen.", ru: "Давай возьмём корзину, а не тележку.", gender: "masc" },
-                { de: "Wo finde ich das Backpulver?", ru: "Где мне найти разрыхлитель?", gender: "neu" },
-                { de: "Gibt's hier auch veganen Käse?", ru: "Здесь есть и веганский сыр тоже?", gender: "masc" },
-                { de: "Sorry, steht das heute im Angebot?", ru: "Извините, это сегодня на скидке?", gender: "neu" },
-                { de: "Das ist voll die Abzocke!", ru: "Это чистой воды грабёж! (очень дорого)", gender: "fem" },
-                { de: "Kann ich das hier wieder zurücklegen?", ru: "Я могу положить это обратно (на полку)?", gender: "other" }
-            ],
-            restaurant: [
-                { de: "Hi, ich hätte gerne einen Cappuccino mit Hafermilch.", ru: "Привет, мне, пожалуйста, капучино на овсяном молоке.", gender: "masc" },
-                { de: "Geht das auch to-go?", ru: "А можно это с собой?", gender: "other" },
-                { de: "Zahlen wir bar oder mit Karte?", ru: "Платим наличкой или картой?", gender: "fem" },
-                { de: "Ich nehme das Gleiche noch mal, bitte.", ru: "Мне то же самое еще раз, пожалуйста.", gender: "other" },
-                { de: "Stimmt so, danke!", ru: "Сдачи не надо, спасибо!", gender: "other" },
-                { de: "Können wir getrennt zahlen?", ru: "Можно нам раздельный счет?", gender: "other" },
-                { de: "Habt ihr auch was Veganes auf der Karte?", ru: "У вас есть что-нибудь веганское в меню?", gender: "fem" },
-                { de: "Das Essen war echt der Hammer, danke!", ru: "Еда была просто супер, спасибо!", gender: "neu" },
-                { de: "Lass stecken, ich lade dich ein.", ru: "Убери кошелек, я угощаю.", gender: "other" },
-                { de: "Ein kaltes Helles, bitte!", ru: "Светлого пива, пожалуйста!", gender: "neu" },
-                { de: "Haben wir freie Platzwahl oder müssen wir warten?", ru: "Нам можно сесть куда угодно или нужно подождать?", gender: "fem" },
-                { de: "Unser Essen ist leider immer noch nicht da.", ru: "Нашей еды, к сожалению, всё еще нет.", gender: "neu" },
-                { de: "Kann ich ein Leitungswasser dazu haben?", ru: "Можно мне еще стакан воды из-под крана к этому?", gender: "neu" },
-                { de: "Habt ihr noch einen Tisch für zwei Personen?", ru: "У вас найдется столик на двоих?", gender: "masc" },
-                { de: "Bringst du uns bitte die Rechnung?", ru: "Принесешь нам счет, пожалуйста?", gender: "fem" },
-                { de: "Was ist eure Spezialität des Hauses?", ru: "Какое у вас фирменное блюдо?", gender: "fem" },
-                { de: "Ist das Gericht scharf?", ru: "Это блюдо острое?", gender: "neu" },
-                { de: "Entschuldigung, ist der Stuhl hier frei?", ru: "Простите, этот стул свободен?", gender: "masc" },
-                { de: "Ich muss kurz auf die Toilette, bin gleich wieder da.", ru: "Мне нужно отойти в туалет, скоро буду.", gender: "fem" },
-                { de: "Ich brauche unbedingt einen Kaffee zum Wachwerden.", ru: "Мне срочно нужен кофе, чтобы проснуться.", gender: "masc" },
-                { de: "Wie lautet das WLAN-Passwort hier?", ru: "Какой тут пароль от вайфая?", gender: "neu" },
-                { de: "Kannst du das bitte einpacken? Ich schaffe das nicht mehr.", ru: "Можешь это завернуть с собой? Я больше не осилю.", gender: "other" },
-                { de: "Gibt es heute ein Mittagsangebot?", ru: "Сегодня есть какое-нибудь обеденное предложение (ланч)?", gender: "neu" },
-                { de: "Ich hätte gerne einen Matcha Latte mit Erbsenmilch.", ru: "Я бы хотел матча латте на гороховом молоке.", gender: "masc" },
-                { de: "Der Service hier ist echt mega freundlich!", ru: "Обслуживание здесь действительно очень дружелюбное!", gender: "masc" }
-            ],
-            city: [
-                { de: "Wo geht's hier zur nächsten U-Bahn?", ru: "Как пройти к ближайшему метро?", gender: "fem" },
-                { de: "Ich suche ein cooles Café hier in der Nähe.", ru: "Я ищу классное кафе тут неподалеку.", gender: "neu" },
-                { de: "Ist das weit von hier?", ru: "Это далеко отсюда?", gender: "other" },
-                { de: "Wie komme ich am schnellsten zum Bahnhof?", ru: "Как быстрее всего добраться до вокзала?", gender: "masc" },
-                { de: "Gibt's hier 'nen Supermarkt um die Ecke?", ru: "Тут есть супермаркет за углом?", gender: "masc" },
-                { de: "Ich habe mich voll verlaufen.", ru: "Я вообще заблудился.", gender: "other" },
-                { de: "Welcher Bus fährt in die Innenstadt?", ru: "Какой автобус едет в центр города?", gender: "masc" },
-                { de: "Wo kann ich ein Ticket ziehen?", ru: "Где мне купить билет (в автомате)?", gender: "neu" },
-                { de: "Hat das Museum heute eigentlich offen?", ru: "Музей вообще сегодня открыт?", gender: "neu" },
-                { de: "Ist das das richtige Gleis für die S-Bahn?", ru: "Это тот самый путь для электрички?", gender: "neu" },
-                { de: "Gibt's hier irgendwo Free-Wifi?", ru: "Тут есть где-нибудь бесплатный вайфай?", gender: "neu" },
-                { de: "Hi, weißt du, wo die Apotheke ist?", ru: "Привет, не знаешь, где тут аптека?", gender: "fem" },
-                { de: "Das sind nur fünf Minuten zu Fuß.", ru: "Это всего пять минут пешком.", gender: "other" },
-                { de: "Kannst du mir das kurz auf der Karte zeigen?", ru: "Можешь показать мне это быстренько на карте?", gender: "fem" },
-                { de: "Wo ist hier der Ausgang?", ru: "Где здесь выход?", gender: "masc" },
-                { de: "Geht's hier lang zum Park?", ru: "Сюда идти к парку?", gender: "masc" },
-                { de: "Mein Handy ist fast leer, gibt's hier 'ne Steckdose?", ru: "У меня телефон почти сел, тут есть розетка?", gender: "fem" },
-                { de: "Sind wir gleich da?", ru: "Мы скоро будем на месте?", gender: "other" },
-                { de: "Kann ich da einfach zu Fuß hinlaufen?", ru: "Я могу туда просто пешком дойти?", gender: "other" },
-                { de: "Wo ist denn hier das Klo?", ru: "А где тут туалет?", gender: "neu" },
-                { de: "Ich habe gerade voll das Funkloch.", ru: "У меня тут вообще связь пропала.", gender: "neu" },
-                { de: "An welcher Haltestelle muss ich raus?", ru: "На какой остановке мне выходить?", gender: "fem" },
-                { de: "Wo geht's zur Fußgängerzone?", ru: "Как пройти к пешеходной зоне?", gender: "fem" },
-                { de: "Gibt's hier 'nen coolen Spot für Fotos?", ru: "Тут есть классное место для фоток?", gender: "masc" },
-                { de: "Du musst einfach nur geradeaus gehen.", ru: "Тебе нужно просто идти прямо.", gender: "other" }
-            ],
-            health: [
-                { de: "Mir geht’s heute echt nicht so gut.", ru: "Мне сегодня реально не очень хорошо.", gender: "other" },
-                { de: "Ich glaube, ich habe mir eine Erkältung geholt.", ru: "Кажется, я подхватил простуду.", gender: "fem" },
-                { de: "Mein Kopf platzt gleich.", ru: "У меня голова сейчас лопнет.", gender: "masc" },
-                { de: "Hast du mal 'ne Ibu für mich?", ru: "У тебя есть ибупрофен для меня?", gender: "fem" },
-                { de: "Ich bin total platt heute.", ru: "Я сегодня вообще без сил.", gender: "other" },
-                { de: "Mir ist echt übel.", ru: "Меня реально тошнит.", gender: "other" },
-                { de: "Ich brauche schnell einen Termin beim Arzt.", ru: "Мне срочно нужен прием у врача.", gender: "masc" },
-                { de: "Gute Besserung, werd schnell wieder gesund!", ru: "Поправляйся, выздоравливай скорее!", gender: "fem" },
-                { de: "Mein Magen spielt komplett verrückt.", ru: "У меня желудок вообще разбушевался.", gender: "masc" },
-                { de: "Ich habe voll die Halsschmerzen.", ru: "У меня жутко болит горло.", gender: "other" },
-                { de: "Ich muss mich kurz hinlegen, mir ist schwindelig.", ru: "Мне надо прилечь ненадолго, у меня кружится голова.", gender: "other" },
-                { de: "Hat die Apotheke noch offen?", ru: "Аптека еще открыта?", gender: "fem" },
-                { de: "Ich habe mir den Fuß verknackst.", ru: "Я подвернул ногу.", gender: "masc" },
-                { de: "Ich habe leichtes Fieber.", ru: "У меня небольшая температура.", gender: "neu" },
-                { de: "Gibt es das Medikament rezeptfrei?", ru: "Это лекарство продается без рецепта?", gender: "neu" },
-                { de: "Ich brauche eine Krankschreibung für den Job.", ru: "Мне нужен больничный для работы.", gender: "fem" },
-                { de: "Hoffentlich ist es nicht ansteckend.", ru: "Надеюсь, это не заразно.", gender: "other" },
-                { de: "Ich habe einen fetten Schnupfen.", ru: "У меня сильнейший насморк.", gender: "masc" },
-                { de: "Hat das Zeug irgendwelche Nebenwirkungen?", ru: "У этой штуки есть какие-нибудь побочки?", gender: "neu" },
-                { de: "Ich fühle mich heute wie vom Laster überfahren.", ru: "Я сегодня чувствую себя так, будто меня переехал грузовик.", gender: "masc" },
-                { de: "Meine Augen brennen und tränen total.", ru: "У меня глаза жутко режет и они слезятся.", gender: "other" },
-                { de: "Hast du ein Pflaster für mich?", ru: "У тебя есть пластырь?", gender: "neu" },
-                { de: "Ich muss morgen direkt in die Praxis.", ru: "Мне завтра утром нужно сразу в клинику.", gender: "fem" },
-                { de: "Ich bin wieder voll auf den Beinen!", ru: "Я снова на ногах / полностью поправился!", gender: "other" },
-                { de: "Kannst du mir ein Schmerzmittel empfehlen?", ru: "Можешь посоветовать мне какое-нибудь обезболивающее?", gender: "neu" }
-            ],
-            hotel: [
-                { de: "Hi, ist das Zimmer noch zu haben?", ru: "Привет, комната еще свободна?", gender: "neu" },
-                { de: "Wie hoch ist die Warmmiete?", ru: "Сколько выходит аренда вместе с коммуналкой?", gender: "fem" },
-                { de: "Gibt es hier stabiles WLAN?", ru: "Здесь есть нормальный вайфай?", gender: "neu" },
-                { de: "Ich würde mir die Bude gerne mal anschauen.", ru: "Я бы хотел глянуть хату.", gender: "fem" },
-                { de: "Wie läuft das mit der Kaution ab?", ru: "Как дела обстоят с залогом?", gender: "fem" },
-                { de: "Gibt es einen Abschlag für die Küche?", ru: "Нужно ли выкупать кухню у старого жильца?", gender: "masc" },
-                { de: "Wann wäre der Einzugstermin?", ru: "Когда дата заселения?", gender: "masc" },
-                { de: "Ist die WG eher eine Zweck-WG oder locker?", ru: "У вас коммуналка чисто ради экономии или дружеская атмосфера?", gender: "fem" },
-                { de: "Kann ich meine Katze mitbringen?", ru: "Можно мне с кошкой?", gender: "fem" },
-                { de: "Wer kümmert sich um den Müll?", ru: "Кто занимается мусором?", gender: "masc" },
-                { de: "Gibt es einen Waschraum im Keller?", ru: "В подвале есть прачечная?", gender: "masc" },
-                { de: "Kann ich mich hier offiziell anmelden?", ru: "Я смогу здесь официально прописаться?", gender: "other" },
-                { de: "Ich suche ein WG-Zimmer für ein paar Monate.", ru: "Я ищу комнату в коливинге на пару месяцев.", gender: "neu" },
-                { de: "Ist ein Stellplatz für mein Auto dabei?", ru: "Парковочное место для машины включено?", gender: "masc" },
-                { de: "Wie ist die Lage so? Ruhig oder eher laut?", ru: "Как вообще район? Тихий или шумновато?", gender: "fem" },
-                { de: "Ab wann kann ich einchecken?", ru: "Со скольки можно заселиться (в отель)?", gender: "other" },
-                { de: "Kann ich mein Gepäck hier kurz stehen lassen?", ru: "Можно я оставлю тут багаж ненадолго?", gender: "neu" },
-                { de: "Der Aufzug ist leider kaputt.", ru: "Лифт, к сожалению, сломался.", gender: "masc" },
-                { de: "Gibt es ein kostenloses Frühstück?", ru: "Завтрак бесплатный?", gender: "neu" },
-                { de: "Bis wann muss ich morgen auschecken?", ru: "До скольки завтра нужно выехать?", gender: "other" },
-                { de: "Ich brauche ein frisches Handtuch, bitte.", ru: "Мне нужно свежее полотенце, пожалуйста.", gender: "neu" },
-                { de: "Die Heizung in meinem Zimmer geht nicht.", ru: "Отопление в моей комнате не работает.", gender: "fem" },
-                { de: "Haben Sie noch ein Doppelzimmer frei?", ru: "У вас есть еще свободный двухместный номер?", gender: "neu" },
-                { de: "Wo kriege ich den Schlüssel her?", ru: "Где мне взять ключ?", gender: "masc" },
-                { de: "Die Nachbarn machen mega viel Lärm.", ru: "Соседи дико шумят.", gender: "masc" }
-            ],
-            job: [
-                { de: "Ich muss dringend meinen Lebenslauf aufpimpen.", ru: "Мне нужно срочно прокачать моё резюме.", gender: "masc" },
-                { de: "Der Job ist komplett remote, echt chillig.", ru: "Работа полностью на удаленке, реально кайф.", gender: "masc" },
-                { de: "Ich habe morgen ein Vorstellungsgespräch bei einem coolen Startup.", ru: "У меня завтра собеседование в одном крутом стартапе.", gender: "neu" },
-                { de: "Mein LinkedIn-Profil braucht echt mal ein Update.", ru: "Моему профилю в LinkedIn реально нужно обновление.", gender: "neu" },
-                { de: "Gibt es bei euch die Option auf Homeoffice?", ru: "У вас есть возможность работать из дома?", gender: "neu" },
-                { de: "Ich suche nach einer Stelle mit einer Vier-Tage-Woche.", ru: "Я ищу работу с четырехдневной рабочей неделей.", gender: "fem" },
-                { de: "Kannst du mal kurz über meine Bewerbung rüberschauen?", ru: "Можешь быстренько глянуть мое резюме/отклик?", gender: "fem" },
-                { de: "Wie hoch ist bei der Stelle das Einstiegsgehalt?", ru: "Какая начальная зарплата на этой должности?", gender: "neu" },
-                { de: "Hast du Bock auf ein kurzes Kennenlernen per Teams?", ru: "Хочешь коротко созвониться в Teams для знакомства?", gender: "neu" },
-                { de: "Die Arbeitsatmosphäre in der Agentur soll mega entspannt sein.", ru: "Атмосфера в агентстве, говорят, супер расслабленная.", gender: "fem" },
-                { de: "Ich habe mein Zeugnis direkt als PDF angehängt.", ru: "Я прикрепил свой диплом/сертификат сразу в PDF.", gender: "neu" },
-                { de: "Ich will mich beruflich verändern und suche was Neues.", ru: "Я хочу сменить сферу деятельности и ищу что-то новое.", gender: "other" },
-                { de: "Wie ist eigentlich die Work-Life-Balance bei euch?", ru: "Как у вас вообще дела с балансом работы и личной жизни?", gender: "fem" },
-                { de: "Ich habe nächste Woche mein zweites Interview.", ru: "На следующей неделе у меня второе собеседование.", gender: "neu" },
-                { de: "Ich habe endlich die Zusage für die Stelle bekommen!", ru: "Мне наконец-то пришло подтверждение на работу!", gender: "fem" },
-                { de: "Die Stellenausschreibung klingt perfekt für mich.", ru: "Описание вакансии звучит идеально для меня.", gender: "fem" },
-                { de: "Ich mache gerade ein Praktikum im Marketing.", ru: "Я сейчас прохожу практику в маркетинге.", gender: "neu" },
-                { de: "Gibt es bei dem Job auch flexible Arbeitszeiten?", ru: "На этой работе есть гибкий график?", gender: "other" },
-                { de: "Der Chef war im Gespräch total nett und locker.", ru: "Босс на собеседовании был очень приятным и простым в общении.", gender: "masc" },
-                { de: "Hast du ein paar Tipps für mein Anschreiben?", ru: "У тебя есть пара советов для моего сопроводительного письма?", gender: "neu" },
-                { de: "Ich habe gestern alle Bewerbungsunterlagen abgeschickt.", ru: "Вчера я отправил все документы для подачи заявки.", gender: "other" },
-                { de: "Hast du schon eine Rückmeldung von der Firma?", ru: "У тебя уже есть какой-то ответ от компании?", gender: "fem" },
-                { de: "Ich arbeite super gerne im Team.", ru: "Мне очень нравится работать в команде.", gender: "neu" },
-                { de: "Ich habe voll Bock auf diese neue Herausforderung.", ru: "Я очень загорелся этим новым вызовом (задачей).", gender: "fem" },
-                { de: "Passt dir ein kurzes Telefonat heute Nachmittag?", ru: "Тебе удобно недолго созвониться сегодня после обеда?", gender: "neu" }
-            ],
-            hobby: [
-                { de: "Hast du Bock auf ein Bier heute Abend?", ru: "Хочешь пива сегодня вечером?", gender: "neu" },
-                { de: "Ich gehe am Wochenende bouldern.", ru: "В выходные я иду на скалодром.", gender: "neu" },
-                { de: "Zocken wir heute Abend eine Runde?", ru: "Поиграем сегодня вечером разок?", gender: "fem" },
-                { de: "Ich muss mal wieder dringend zum Sport.", ru: "Мне надо снова срочно заняться спортом.", gender: "masc" },
-                { de: "Lass uns morgen im Park chillen.", ru: "Давай завтра почиллим в парке.", gender: "masc" },
-                { de: "Ich suchte gerade eine echt krasse Serie.", ru: "Я сейчас взахлеб смотрю один просто нереальный сериал.", gender: "fem" },
-                { de: "Gehen wir heute Abend in den Club?", ru: "Пойдем сегодня вечером в клуб?", gender: "masc" },
-                { de: "Ich mache mir heute einen gemütlichen Couch-Tag.", ru: "Я устрою себе сегодня ленивый день на диване.", gender: "masc" },
-                { de: "Ich gehe gleich joggen, kommst du mit?", ru: "Я сейчас побегу, ты со мной?", gender: "other" },
-                { de: "Hast du schon Pläne fürs Wochenende?", ru: "Есть уже планы на выходные?", gender: "other" },
-                { de: "Ich bin momentan voll im Gym-Fieber.", ru: "Я сейчас по уши в спортзальной лихорадке.", gender: "neu" },
-                { de: "Lass uns ein paar Körbe werfen gehen.", ru: "Давай сходим покидаем мяч в кольцо.", gender: "other" },
-                { de: "Ich höre super gerne Podcasts beim Kochen.", ru: "Я обожаю слушать подкасты во время готовки.", gender: "other" },
-                { de: "Bock auf eine Runde Fifa?", ru: "Не хочешь партию в Фифу?", gender: "fem" },
-                { de: "Ich feiere das neue Videospiel total.", ru: "Я просто тащусь от этой новой видеоигры.", gender: "neu" },
-                { de: "Morgen machen wir eine entspannte Radtour.", ru: "Завтра мы устроим ненапряжную велопрогулку.", gender: "fem" },
-                { de: "Ich gehe am Freitag auf ein Konzert.", ru: "В пятницу я иду на концерт.", gender: "neu" },
-                { de: "Ich hänge heute einfach nur zu Hause ab.", ru: "Я сегодня просто залипаю дома.", gender: "other" },
-                { de: "Wir grillen heute bei dem geilen Wetter im Garten.", ru: "Мы сегодня грилим в саду при такой классной погоде.", gender: "masc" },
-                { de: "Ich probiere heute ein neues Rezept aus.", ru: "Я сегодня опробую новый рецепт.", gender: "neu" },
-                { de: "Lass uns einfach durch die Stadt bummeln.", ru: "Давай просто побродим по городу.", gender: "fem" },
-                { de: "Ich mache mega gerne Fotos mit meiner Kamera.", ru: "Я очень люблю фоткать на свою камеру.", gender: "fem" },
-                { de: "Gehen wir am Samstag spontan ins Kino?", ru: "Пойдем в субботу спонтанно в кино?", gender: "neu" },
-                { de: "Ich muss meinen Kopf beim Laufen freibekommen.", ru: "Мне нужно проветрить голову во время пробежки.", gender: "masc" },
-                { de: "Trinken wir einen Kaffee in meinem Lieblingscafé?", ru: "Выпьем по кофе в моей любимой кофейне?", gender: "masc" }
-            ],
-            guests: [
-                { de: "Hey, danke für die Einladung!", ru: "Хей, спасибо за приглашение!", gender: "fem" },
-                { de: "Soll ich noch irgendwas mitbringen?", ru: "Мне принести что-нибудь еще?", gender: "other" },
-                { de: "Zieh einfach deine Schuhe aus.", ru: "Просто разувайся.", gender: "other" },
-                { de: "Bedien dich, der Kühlschrank ist voll!", ru: "Угощайся, холодильник забит!", gender: "masc" },
-                { de: "Mach's dir bequem!", ru: "Устраивайся поудобнее!", gender: "other" },
-                { de: "Die Party ist echt mega nice, danke dir!", ru: "Вечеринка просто суперская, спасибо тебе!", gender: "fem" },
-                { de: "Hast du noch ein kaltes Bier am Start?", ru: "У тебя найдется еще холодное пивко?", gender: "neu" },
-                { de: "Ich mach mich mal langsam auf den Weg.", ru: "Я, пожалуй, буду потихоньку собираться.", gender: "masc" },
-                { de: "Alles Gute zum Geburtstag! Lass dich feiern!", ru: "С днем рождения! Отлично тебе отпраздновать!", gender: "masc" },
-                { de: "Das Essen schmeckt echt mega lecker!", ru: "Еда прямо нереально вкусная!", gender: "neu" },
-                { de: "Kann ich mein Handy kurz aufladen?", ru: "Можно я быстренько поставлю телефон на зарядку?", gender: "neu" },
-                { de: "Wo ist denn hier das Klo?", ru: "А где здесь туалет?", gender: "neu" },
-                { de: "Wollen wir anstoßen? Auf uns!", ru: "Чокнемся? За нас!", gender: "other" },
-                { de: "Kann ich dir in der Küche helfen?", ru: "Тебе помочь чем-нибудь на кухне?", gender: "fem" },
-                { de: "Die Stimmung hier ist echt der Hammer!", ru: "Атмосфера здесь просто пушка!", gender: "fem" },
-                { de: "Ich habe einen mega Kater von gestern.", ru: "У меня жуткое похмелье со вчерашнего.", gender: "masc" },
-                { de: "Danke für das schöne Geschenk!", ru: "Спасибо за классный подарок!", gender: "neu" },
-                { de: "Sollen wir eine Runde zocken?", ru: "Сыграем раунд (в приставку/настолку)?", gender: "fem" },
-                { de: "Wie war dein Urlaub?", ru: "Как прошел отпуск?", gender: "masc" },
-                { de: "Schön, dass du da bist!", ru: "Круто, что ты пришел!", gender: "other" },
-                { de: "Das war echt ein geiler Abend!", ru: "Это был реально офигенный вечер!", gender: "masc" },
-                { de: "Frohe Weihnachten und feiert schön!", ru: "Счастливого Рождества и хорошего праздника!", gender: "other" },
-                { de: "Guten Rutsch ins neue Jahr!", ru: "С наступающим Новым годом!", gender: "masc" },
-                { de: "Ich bringe morgen einen Nudelsalat mit.", ru: "Я завтра принесу макаронный салат.", gender: "masc" },
-                { de: "Wer hat eigentlich die Playlist gemacht?", ru: "Кто вообще составлял этот плейлист?", gender: "fem" }
-            ],
-            emergency: [
-                { de: "Mein Akku ist komplett leer, ich brauche Hilfe.", ru: "Мой аккум полностью сел, мне нужна помощь.", gender: "masc" },
-                { de: "Ich habe meinen Schlüssel drinnen stecken lassen.", ru: "Я оставил ключ внутри (в замке).", gender: "masc" },
-                { de: "Mein Handy wurde gerade geklaut!", ru: "У меня только что украли телефон!", gender: "neu" },
-                { de: "Wo ist das nächste Krankenhaus? Ist echt dringend.", ru: "Где ближайшая больница? Это реально срочно.", gender: "neu" },
-                { de: "Ich habe mich total verlaufen, wo bin ich hier?", ru: "Я вообще заблудился, где я нахожусь?", gender: "other" },
-                { de: "Ruf mal bitte schnell einen Krankenwagen!", ru: "Вызови, пожалуйста, быстро скорую!", gender: "masc" },
-                { de: "Kannst du mir kurz dein Ladekabel leihen? Notfall!", ru: "Можешь одолжить зарядку на секунду? ЧП!", gender: "neu" },
-                { de: "Ich habe meine Brieftasche im Bus vergessen.", ru: "Я забыл свой кошелек в автобусе.", gender: "fem" },
-                { de: "Gibt es hier irgendwo eine Apotheke, die offen hat?", ru: "Здесь есть где-нибудь открытая аптека?", gender: "fem" },
-                { de: "Mein Auto ist mitten auf der Straße liegengeblieben.", ru: "Моя машина заглохла прямо посреди дороги.", gender: "neu" },
-                { de: "Ich brauche einen Abschleppdienst, mein Motor raucht.", ru: "Мне нужен эвакуатор, у меня дымится мотор.", gender: "masc" },
-                { de: "Hier brennt es! Wo ist der Feuerlöscher?", ru: "Здесь пожар! Где огнетушитель?", gender: "masc" },
-                { de: "Lass mich in Ruhe oder ich rufe die Polizei!", ru: "Оставь меня в покое, или я вызову полицию!", gender: "fem" },
-                { de: "Ich habe meine EC-Karte verloren, wie sperre ich die?", ru: "Я потерял свою банковскую карту, как её заблокировать?", gender: "fem" },
-                { de: "Mein Koffer ist am Flughafen nicht angekommen.", ru: "Мой чемодан не прилетел в аэропорт.", gender: "masc" },
-                { de: "Mir ist mega schwindelig, ich muss mich kurz hinsetzen.", ru: "У меня жутко кружится голова, мне нужно присесть.", gender: "other" },
-                { de: "Das Wasser in der Dusche ist eiskalt, da stimmt was nicht.", ru: "Вода в душе ледяная, что-то тут не так.", gender: "neu" },
-                { de: "Hier ist gerade ein Unfall passiert, wir brauchen Hilfe!", ru: "Здесь только что произошло ДТП, нам нужна помощь!", gender: "masc" },
-                { de: "Ich habe meinen Ausweis verloren, was soll ich tun?", ru: "Я потерял паспорт/ID, что мне делать?", gender: "masc" },
-                { de: "Mein WLAN ist komplett tot, ich kann nicht arbeiten.", ru: "У меня полностью лег вайфай, я не могу работать.", gender: "neu" },
-                { de: "Hör auf, mich zu belästigen, sonst mach ich Stress!", ru: "Перестань ко мне приставать, иначе будут проблемы!", gender: "masc" },
-                { de: "Ich habe allergisch auf das Essen reagiert, hast du Tabletten?", ru: "У меня аллергия на эту еду, есть таблетки?", gender: "other" },
-                { de: "Die U-Bahn hat schon wieder extrem Verspätung.", ru: "Метро опять дико задерживается.", gender: "fem" },
-                { de: "Ich bin ausgesperrt, kennst du einen billigen Schlüsseldienst?", ru: "Я захлопнул дверь снаружи, знаешь недорогую службу вскрытия замков?", gender: "masc" },
-                { de: "Hier riecht es voll nach Gas, lass uns rausgehen!", ru: "Здесь сильно пахнет газом, давай выйдем наружу!", gender: "neu" }
-            ]
-        };
-
+        // Инициализация базы данных и состояния
+        let currentCategory = '';
         let currentWords = [];
         let currentIndex = 0;
-        let showingGerman = true;
-        let savedScrollPosition = 0;
+        
+        // Список всех доступных тем
+        const allCategories = ['weather', 'shopping', 'restaurant', 'city', 'health', 'hotel', 'job', 'hobby', 'guests', 'emergency'];
 
-        // Цветовая схема родов
-        const colors = {
-            masc: '#bae1ff',
-            fem: '#ffb3ba',
-            neu: '#baffc9',
-            other: '#ffdfba'
-        };
-
-        // Запуск при загрузке страницы
         window.onload = function() {
             loadUserData();
-            generateDailyPhrase();
+            updateAllProgressBars();
         };
 
-        // --- ЛОГИКА ТАБОВ (ВКЛАДОК) ---
+        // Загрузка пользовательских данных
         function loadUserData() {
             const savedName = localStorage.getItem('german_cards_username') || "Пользователь";
-            
-            // Приветствие на главной (без полей ввода!)
             document.getElementById('welcome-text').innerText = `Привет, ${savedName}! 👋`;
-            
-            // Имя в профиле
             document.getElementById('profile-name').innerText = savedName;
-            
-            // Считаем РЕАЛЬНУЮ статистику для профиля
             updateProfileStats();
         }
 
-        // Функция, которая честно считает, сколько тем начато и сколько слов просмотрено
+        // Обновление прогресс-баров для всех тем на главной странице
+        function updateAllProgressBars() {
+            allCategories.forEach(category => {
+                const maxViewed = parseInt(localStorage.getItem(`progress_max_${category}`)) || 0;
+                // Все наши темы имеют ровно по 25 слов
+                const percent = Math.min(Math.round((maxViewed / 25) * 100), 100);
+                const fillElement = document.getElementById(`progress-fill-${category}`);
+                if (fillElement) {
+                    fillElement.style.width = `${percent}%`;
+                }
+            });
+        }
+
+        // Подсчет честной статистики для Профиля
         function updateProfileStats() {
-            const categories = Object.keys(wordDatabase);
             let startedCategoriesCount = 0;
             let totalViewedWords = 0;
-            let totalWordsInApp = 0;
+            const totalWordsInApp = 250; // 10 тем по 25 слов
 
-            categories.forEach(category => {
+            allCategories.forEach(category => {
                 const maxViewed = parseInt(localStorage.getItem(`progress_max_${category}`)) || 0;
-                const totalWords = wordDatabase[category].length;
-
-                totalWordsInApp += totalWords;
                 totalViewedWords += maxViewed;
-
                 if (maxViewed > 0) {
-                    startedCategoriesCount++; // Тема считается начатой, если просмотрено > 0 слов
+                    startedCategoriesCount++;
                 }
             });
 
-            // Находим элементы в профиле и записываем туда честные цифры
-            const statBoxes = document.getElementById('screen-profile').querySelectorAll('.stat-val');
-            if (statBoxes.length >= 2) {
-                statBoxes[0].innerText = `${startedCategoriesCount} / ${categories.length}`; // Реально начатые темы
-                statBoxes[1].innerText = `${totalViewedWords} / ${totalWordsInApp}`;       // Реально просмотренные слова
+            document.getElementById('profile-stat-categories').innerText = `${startedCategoriesCount} / ${allCategories.length}`;
+            document.getElementById('profile-stat-words').innerText = `${totalViewedWords} / ${totalWordsInApp}`;
+        }
+
+        // Переключение вкладок меню
+        function switchTab(screenId, navElement) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            document.getElementById(`screen-${screenId}`).classList.add('active');
+            navElement.classList.add('active');
+
+            if (screenId === 'profile') {
+                updateProfileStats();
             }
         }
 
-        // Позволим менять имя прямо в профиле, если кликнуть на него!
+        // Открытие темы карточек
+        async function openCategory(category) {
+            currentCategory = category;
+            currentIndex = 0;
+            
+            // Скрываем сетку и показываем экран карточек
+            document.getElementById('screen-home').classList.remove('active');
+            document.getElementById('screen-cards').classList.add('active');
+            
+            // Показываем лоадер
+            const loader = document.getElementById('cards-loader');
+            const cardsArea = document.getElementById('cards-area');
+            loader.style.display = 'block';
+            cardsArea.style.display = 'none';
+
+            try {
+                // ДИНАМИЧЕСКИЙ ЗАПРОС К НАШЕМУ JSON ФАЙЛУ!
+                const response = await fetch(`data/${category}.json`);
+                if (!response.ok) {
+                    throw new Error("Не удалось загрузить файл темы");
+                }
+                currentWords = await response.json();
+                
+                // Скрываем лоадер и показываем карточки
+                loader.style.display = 'none';
+                cardsArea.style.display = 'flex';
+                
+                showCard();
+            } catch (error) {
+                console.error(error);
+                alert("Ошибка при загрузке карточек. Проверьте, создан ли JSON-файл в папке data/");
+                goHome();
+            }
+        }
+
+        // Показ конкретной карточки
+        function showCard() {
+            if (currentWords.length === 0) return;
+
+            const word = currentWords[currentIndex];
+            const wrapper = document.querySelector('.card-wrapper');
+            wrapper.classList.remove('flipped'); // возвращаем на лицо
+
+            document.getElementById('phrase-de').innerText = word.de;
+            document.getElementById('phrase-ru').innerText = word.ru;
+
+            // Настраиваем цвет бэджа рода
+            const genderTag = document.getElementById('gender-tag');
+            genderTag.innerText = word.gender.toUpperCase();
+            
+            if (word.gender === 'masc') {
+                genderTag.style.backgroundColor = 'var(--masc-color)';
+                genderTag.style.color = '#1d3557';
+            } else if (word.gender === 'fem') {
+                genderTag.style.backgroundColor = 'var(--fem-color)';
+                genderTag.style.color = '#3d2c00';
+            } else if (word.gender === 'neu') {
+                genderTag.style.backgroundColor = 'var(--neu-color)';
+                genderTag.style.color = '#283618';
+            } else {
+                genderTag.style.backgroundColor = 'var(--other-color)';
+                genderTag.style.color = '#4a3e3d';
+            }
+
+            // Обновляем счетчик
+            document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${currentWords.length}`;
+
+            // Записываем прогресс в память
+            const savedProgress = parseInt(localStorage.getItem(`progress_max_${currentCategory}`)) || 0;
+            if (currentIndex + 1 > savedProgress) {
+                localStorage.setItem(`progress_max_${currentCategory}`, currentIndex + 1);
+            }
+        }
+
+        // Переворот карточки
+        function flipCard() {
+            document.querySelector('.card-wrapper').classList.toggle('flipped');
+        }
+
+        // Листание вперед
+        function nextCard() {
+            if (currentIndex < currentWords.length - 1) {
+                currentIndex++;
+                showCard();
+            }
+        }
+
+        // Листание назад
+        function prevCard() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showCard();
+            }
+        }
+
+        // Возврат на главную
+        function goHome() {
+            document.getElementById('screen-cards').classList.remove('active');
+            document.getElementById('screen-home').classList.add('active');
+            updateAllProgressBars();
+        }
+
+        // Изменение имени в профиле
         document.getElementById('profile-name').addEventListener('click', function() {
             const currentName = this.innerText;
             const newName = prompt("Как тебя зовут?", currentName);
@@ -994,212 +776,6 @@
                 loadUserData();
             }
         });
-
-        function loadUserData() {
-            const savedName = localStorage.getItem('german_cards_username');
-            if (savedName) {
-                updateWelcomeText(savedName);
-                document.getElementById('user-name-input').value = savedName;
-            }
-        }
-
-        function updateWelcomeText(name) {
-            document.getElementById('welcome-text').innerText = `Привет, ${name}! 👋`;
-            document.getElementById('profile-name').innerText = name;
-        }
-
-        // --- УМНАЯ "ФРАЗА ДНЯ" ---
-        function generateDailyPhrase() {
-            const today = new Date().toDateString(); // Получаем текущую дату (без времени)
-            const savedDate = localStorage.getItem('daily_phrase_date');
-            
-            let dailyPhrase;
-
-            // Если дата изменилась или фразы дня еще нет в памяти
-            if (savedDate !== today) {
-                // Собираем абсолютно все фразы из всех тем в один массив
-                const allPhrases = [];
-                Object.keys(wordDatabase).forEach(category => {
-                    allPhrases.push(...wordDatabase[category]);
-                });
-
-                // Выбираем случайную фразу
-                const randomIndex = Math.floor(Math.random() * allPhrases.length);
-                dailyPhrase = allPhrases[randomIndex];
-
-                // Сохраняем выбранную фразу и сегодняшнюю дату в память телефона
-                localStorage.setItem('daily_phrase_date', today);
-                localStorage.setItem('daily_phrase_data', JSON.stringify(dailyPhrase));
-            } else {
-                // Если день еще не прошел — берем вчерашнюю фразу дня из памяти
-                dailyPhrase = JSON.parse(localStorage.getItem('daily_phrase_data'));
-            }
-
-            // Выводим фразу дня на экран
-            if (dailyPhrase) {
-                document.getElementById('daily-german-text').innerText = dailyPhrase.de;
-                document.getElementById('daily-russian-text').innerText = dailyPhrase.ru;
-            }
-        }
-
-        // --- ЛОГИКА ОБУЧАЮЩИХ КАРТОЧЕК ---
-        let currentLevelKey = ""; // Запоминаем, какая тема сейчас открыта
-
-        // Запуск при загрузке страницы — теперь также загружает сохранённый прогресс пользователя
-        window.onload = function() {
-            loadUserData();
-            generateDailyPhrase();
-            loadAllProgress(); // Загружаем прогресс по всем темам при старте!
-        };
-
-        function startLevel(levelKey) {
-            savedScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-
-            currentLevelKey = levelKey; // Запоминаем текущую тему
-            currentWords = wordDatabase[levelKey] || [];
-            
-            // Загружаем сохранённый индекс карточки, на которой остановились (или 0)
-            const savedIndex = localStorage.getItem(`progress_index_${levelKey}`);
-            currentIndex = savedIndex ? parseInt(savedIndex) : 0;
-            showingGerman = true;
-
-            // Скрываем навигацию и списки
-            document.getElementById('screen-levels').classList.remove('active');
-            document.getElementById('app-nav-bar').style.display = 'none';
-            document.getElementById('card-screen').style.display = 'flex';
-
-            updateCard();
-        }
-
-        function backToMenu() {
-            document.getElementById('card-screen').style.display = 'none';
-            document.getElementById('screen-levels').classList.add('active');
-            document.getElementById('app-nav-bar').style.display = 'flex';
-
-            // Обновляем визуальные полосочки прогресса в меню при возврате
-            loadAllProgress();
-
-            setTimeout(() => {
-                window.scrollTo({
-                    top: savedScrollPosition,
-                    behavior: 'instant'
-                });
-            }, 50);
-        }
-
-        function updateCard() {
-            if (currentWords.length === 0) return;
-
-            const word = currentWords[currentIndex];
-            const cardElement = document.getElementById('main-card');
-            
-            document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${currentWords.length}`;
-            
-            const genderColor = colors[word.gender] || colors.other;
-            cardElement.style.backgroundColor = genderColor;
-
-            showingGerman = true;
-            document.getElementById('german-text').innerText = word.de;
-            document.getElementById('russian-text').style.display = 'none';
-
-            // Сохраняем текущий прогресс изучения в память телефона
-            saveProgress(currentLevelKey, currentIndex + 1);
-        }
-
-        // Функция для сохранения прогресса в локальную память устройства
-        function saveProgress(levelKey, viewCount) {
-            const maxViewed = localStorage.getItem(`progress_max_${levelKey}`) || 0;
-            // Запоминаем только максимальный прогресс (чтобы он не уменьшался, если листать назад)
-            if (viewCount > maxViewed) {
-                localStorage.setItem(`progress_max_${levelKey}`, viewCount);
-            }
-            // Запоминаем, на какой конкретно карточке сейчас остановился пользователь
-            localStorage.setItem(`progress_index_${levelKey}`, currentIndex);
-        }
-
-        // Функция для загрузки и отображения прогресса на главном экране по всем темам
-        function loadAllProgress() {
-            const categories = Object.keys(wordDatabase);
-            
-            categories.forEach(category => {
-                const maxViewed = parseInt(localStorage.getItem(`progress_max_${category}`)) || 0;
-                const totalWords = wordDatabase[category].length;
-                
-                // Рассчитываем процент прогресса
-                const percentage = totalWords > 0 ? Math.round((maxViewed / totalWords) * 100) : 0;
-                
-                // Находим элементы на странице по ID
-                const fillElement = document.getElementById(`progress-${category}`);
-                const textElement = fillElement ? fillElement.closest('.progress-container').querySelector('.progress-text') : null;
-                
-                // Обновляем ширину зеленой полоски и текстовый показатель
-                if (fillElement) {
-                    fillElement.style.width = `${percentage}%`;
-                }
-                if (textElement) {
-                    textElement.innerText = `${maxViewed} / ${totalWords} слов`;
-                }
-            });
-        }
-
-        function backToMenu() {
-            document.getElementById('card-screen').style.display = 'none';
-            document.getElementById('screen-levels').classList.add('active');
-            document.getElementById('app-nav-bar').style.display = 'flex';
-
-            setTimeout(() => {
-                window.scrollTo({
-                    top: savedScrollPosition,
-                    behavior: 'instant'
-                });
-            }, 50);
-        }
-
-        function updateCard() {
-            if (currentWords.length === 0) return;
-
-            const word = currentWords[currentIndex];
-            const cardElement = document.getElementById('main-card');
-            
-            document.getElementById('card-counter').innerText = `${currentIndex + 1} / ${currentWords.length}`;
-            
-            const genderColor = colors[word.gender] || colors.other;
-            cardElement.style.backgroundColor = genderColor;
-
-            showingGerman = true;
-            document.getElementById('german-text').innerText = word.de;
-            document.getElementById('russian-text').style.display = 'none';
-        }
-
-        function flipCard() {
-            const word = currentWords[currentIndex];
-            const russianTextElement = document.getElementById('russian-text');
-
-            if (showingGerman) {
-                russianTextElement.innerText = word.ru;
-                russianTextElement.style.display = 'block';
-                showingGerman = false;
-            } else {
-                russianTextElement.style.display = 'none';
-                showingGerman = true;
-            }
-        }
-
-        function nextCard(event) {
-            event.stopPropagation();
-            if (currentIndex < currentWords.length - 1) {
-                currentIndex++;
-                updateCard();
-            }
-        }
-
-        function prevCard(event) {
-            event.stopPropagation();
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCard();
-            }
-        }
     </script>
 </body>
 </html>
