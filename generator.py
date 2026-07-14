@@ -83,11 +83,26 @@ def generate_words():
             # Чистим ответ на всякий случай
             cleaned_text = ai_text.replace("```json", "").replace("```", "").strip()
 
-            # Проверяем, закрыт ли JSON массив
-            if not cleaned_text.endswith("]"):
-                cleaned_text += "]"
+            try:
+                new_words = json.loads(cleaned_text)
+            except json.JSONDecodeError:
+                # Ответ обрезался посередине. Отрезаем до последнего
+                # полностью завершенного элемента "}" и закрываем массив.
+                last_good = cleaned_text.rfind('}')
+                new_words = None
+                while last_good != -1:
+                    candidate = cleaned_text[:last_good + 1] + "]"
+                    try:
+                        new_words = json.loads(candidate)
+                        break
+                    except json.JSONDecodeError:
+                        last_good = cleaned_text.rfind('}', 0, last_good)
+                if new_words is None:
+                    raise
 
-            new_words = json.loads(cleaned_text)
+            if len(new_words) < 25:
+                print(f"⚠️ Ответ обрезался, спасли {len(new_words)} из 25 слов. Продолжаем с тем, что есть.")
+
             print(f"Успешно получено {len(new_words)} слов от ИИ!")
     except Exception as e:
         print(f"Ошибка при запросе к ИИ: {e}")
