@@ -1,4 +1,3 @@
-
 import os
 import sys
 import re
@@ -27,7 +26,7 @@ def generate_words():
         "guests": "В гостях / Праздники",
         "emergency": "Проблемы и ЧС"
     }
-    
+
     topic_name_ru = topic_translations.get(topic, topic)
 
     print(f"Запуск генерации для темы: {topic_name_ru}...")
@@ -57,9 +56,8 @@ def generate_words():
     ]
     """
 
-    # Абсолютно чистая ссылка без скобок!
     url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-    
+
     headers = {"Content-Type": "application/json"}
     data = {
         "contents": [{
@@ -87,9 +85,9 @@ def generate_words():
         with open("index.html", "r", encoding="utf-8") as f:
             html_content = f.read()
 
-        # Меняем содержимое внутри квадратных скобок [...] для выбранной темы
+        # Заменяем всё внутри квадратных скобок [...] для выбранной темы
         pattern = rf'({topic}:\s*\[)(.*?)(\])'
-        
+
         formatted_words = ",\n".join([f'                {{ de: "{w["de"]}", ru: "{w["ru"]}", gender: "{w["gender"]}" }}' for w in new_words])
         replacement = f"\\1\n{formatted_words}\n            \\3"
 
