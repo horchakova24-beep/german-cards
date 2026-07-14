@@ -57,7 +57,8 @@ def generate_words():
     """
 
     # Настройки для отправки запроса к ИИ (используем модель Gemini)
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"    
+    url = f"[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=){api_key}"
+    
     headers = {"Content-Type": "application/json"}
     data = {
         "contents": [{
@@ -86,15 +87,15 @@ url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash
         with open("index.html", "r", encoding="utf-8") as f:
             html_content = f.read()
 
-        # Ищем блок этой темы в базе данных внутри index.html и заменяем его (улучшенный поиск)
-        pattern = rf'({topic}:\s*\[)(.*?)(\]\s*,?\s*\n?\s*//?\s*[Вв]ременные|\]\s*,?\s*\n?\s*\w+:\s*\[)'
+        # Ищем строго строку темы и заменяем всё внутри квадратных скобок [...]
+        pattern = rf'({topic}:\s*\[)(.*?)(\])'
         
         # Превращаем новые слова в красивую строку кода
         formatted_words = ",\n".join([f'                {{ de: "{w["de"]}", ru: "{w["ru"]}", gender: "{w["gender"]}" }}' for w in new_words])
         replacement = f"\\1\n{formatted_words}\n            \\3"
 
         # Проводим замену
-        new_html_content = re.sub(pattern, replacement, html_content, flags=re.DOTALL)
+        new_html_content = re.sub(pattern, replacement, html_content, count=1)
 
         # Сохраняем обновленный файл
         with open("index.html", "w", encoding="utf-8") as f:
