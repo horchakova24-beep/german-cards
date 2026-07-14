@@ -64,7 +64,8 @@ def generate_words():
             "parts": [{"text": prompt}]
         }],
         "generationConfig": {
-            "responseMimeType": "application/json"
+            "responseMimeType": "application/json",
+            "maxOutputTokens": 8192
         }
     }
 
@@ -74,7 +75,13 @@ def generate_words():
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode("utf-8"))
             ai_text = result['candidates'][0]['content']['parts'][0]['text']
-            new_words = json.loads(ai_text.strip())
+            try:
+                new_words = json.loads(ai_text.strip())
+            except json.JSONDecodeError as je:
+                print(f"Ошибка: ИИ вернул невалидный JSON: {je}")
+                print("--- Сырой ответ ИИ (для отладки) ---")
+                print(ai_text)
+                sys.exit(1)
             print(f"Успешно получено {len(new_words)} слов от ИИ!")
     except Exception as e:
         print(f"Ошибка при запросе к ИИ: {e}")
