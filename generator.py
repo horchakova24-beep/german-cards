@@ -57,8 +57,7 @@ def generate_words():
     """
 
     # Изменили v1beta на v1 для совместимости с моделью 2.5
-    url = f"[https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=){api_key}"
-
+url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key={api_key}"
     headers = {"Content-Type": "application/json"}
     data = {
         "contents": [{
