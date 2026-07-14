@@ -31,7 +31,7 @@ def generate_words():
 
     print(f"Запуск генерации для темы: {topic_name_ru}...")
 
-    # Наш секретный жесткий промпт-инструкция для ИИ
+    # Инструкция для ИИ
     prompt = f"""
     Ты — молодой, дружелюбный и современный житель Германии в 2026 году. 
     Ты помогаешь составить учебные карточки для изучения живого, разговорного немецкого языка (Alltagssprache).
@@ -56,8 +56,8 @@ def generate_words():
     ]
     """
 
-    # Настройки для отправки запроса к ИИ (используем модель Gemini)
- url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+    # Абсолютно чистая ссылка без скобок!
+    url = f"[https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=](https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=){api_key}"
     
     headers = {"Content-Type": "application/json"}
     data = {
@@ -74,7 +74,6 @@ def generate_words():
     try:
         with urllib.request.urlopen(req) as response:
             result = json.loads(response.read().decode("utf-8"))
-            # Вытаскиваем текст ответа ИИ
             ai_text = result['candidates'][0]['content']['parts'][0]['text']
             new_words = json.loads(ai_text.strip())
             print(f"Успешно получено {len(new_words)} слов от ИИ!")
@@ -82,22 +81,19 @@ def generate_words():
         print(f"Ошибка при запросе к ИИ: {e}")
         sys.exit(1)
 
-    # Теперь встраиваем эти слова в наш index.html
+    # Встраиваем слова в наш index.html
     try:
         with open("index.html", "r", encoding="utf-8") as f:
             html_content = f.read()
 
-        # Ищем строго строку темы и заменяем всё внутри квадратных скобок [...]
+        # Меняем содержимое внутри квадратных скобок [...] для выбранной темы
         pattern = rf'({topic}:\s*\[)(.*?)(\])'
         
-        # Превращаем новые слова в красивую строку кода
         formatted_words = ",\n".join([f'                {{ de: "{w["de"]}", ru: "{w["ru"]}", gender: "{w["gender"]}" }}' for w in new_words])
         replacement = f"\\1\n{formatted_words}\n            \\3"
 
-        # Проводим замену
         new_html_content = re.sub(pattern, replacement, html_content, count=1)
 
-        # Сохраняем обновленный файл
         with open("index.html", "w", encoding="utf-8") as f:
             f.write(new_html_content)
             
